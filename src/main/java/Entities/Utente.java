@@ -1,3 +1,12 @@
+package Entities;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+
+
 import java.util.UUID;
 
 
@@ -8,7 +17,7 @@ public class Utente {
 
     @Id
     @GeneratedValue
-    private UUID id;                // Hibernate 6 gestisce UUID
+    private UUID id;
     @Column(unique = true, nullable = false)
     private String username;
     @Column(unique = true, nullable = false)
