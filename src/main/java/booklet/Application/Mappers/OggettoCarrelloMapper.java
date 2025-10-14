@@ -1,7 +1,7 @@
-package Mappers;
+package booklet.Application.Mappers;
 
-import DTO.OggettoCarrelloDTO;
-import Entities.OggettoCarrello;
+import booklet.Application.DTO.OggettoCarrelloDTO;
+import booklet.Application.Entities.OggettoCarrello;
 
 import java.util.Objects;
 
@@ -14,7 +14,7 @@ public final class OggettoCarrelloMapper {
     public static OggettoCarrelloDTO toDto(OggettoCarrello entity) {
         Objects.requireNonNull(entity, "L'oggetto carrello da convertire non può essere nullo");
         return new OggettoCarrelloDTO(
-                entity.getId(),
+                entity.getIsbn(),
                 entity.getNome(),
                 entity.getPrezzoUnitario(),
                 entity.getQuantita()

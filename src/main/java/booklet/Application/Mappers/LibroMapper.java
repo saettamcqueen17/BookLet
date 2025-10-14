@@ -1,7 +1,7 @@
-package Mappers;
+package booklet.Application.Mappers;
 
-import DTO.LibroDTO;
-import Entities.Libro;
+import booklet.Application.DTO.LibroDTO;
+import booklet.Application.Entities.Libro;
 
 import java.lang.reflect.Field;
 import java.util.Objects;

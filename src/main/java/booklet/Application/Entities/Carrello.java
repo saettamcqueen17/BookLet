@@ -1,4 +1,4 @@
-package Entities;
+package booklet.Application.Entities;
 
 
 
@@ -20,7 +20,7 @@ public class Carrello {
     public void aggiungiOggetto(OggettoCarrello oggetto) {
         Objects.requireNonNull(oggetto, "L'oggetto da aggiungere non può essere nullo");
 
-        libriNelCarrello.compute(oggetto.getId(), (id, esistente) -> {
+        libriNelCarrello.compute(oggetto.getISBN(), (isbn, esistente) -> {
             if (esistente == null) {
                 return oggetto.copia();
             }

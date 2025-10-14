@@ -1,8 +1,8 @@
-package Mappers;
+package booklet.Application.Mappers;
 
-import DTO.CarrelloDTO;
-import DTO.OggettoCarrelloDTO;
-import Entities.Carrello;
+import booklet.Application.DTO.CarrelloDTO;
+import booklet.Application.DTO.OggettoCarrelloDTO;
+import booklet.Application.Entities.Carrello;
 
 import java.util.List;
 import java.util.Objects;

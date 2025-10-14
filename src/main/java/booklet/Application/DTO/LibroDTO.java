@@ -1,6 +1,6 @@
-package DTO;
+package booklet.Application.DTO;
 
-import Entities.Genere;
+import booklet.Application.Entities.Genere;
 
 import java.math.BigDecimal;
 

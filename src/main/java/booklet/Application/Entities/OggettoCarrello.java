@@ -1,4 +1,4 @@
-package Entities;
+package booklet.Application.Entities;
 
 import java.math.BigDecimal;
 
@@ -10,15 +10,15 @@ import java.util.Objects;
 
 public class OggettoCarrello {
 
-    private final String id;
+    private final String isbn;
     private final String nome;
     private final BigDecimal prezzoUnitario;
     private int quantita;
 
 
-    public OggettoCarrello(String id, String nome, BigDecimal prezzoUnitario, int quantita) {
-        if (id == null || id.isBlank()) {
-            throw new IllegalArgumentException("L'id del prodotto non può essere nullo o vuoto");
+    public OggettoCarrello(String isbn , String nome, BigDecimal prezzoUnitario, int quantita) {
+        if (isbn == null || isbn.isBlank()) {
+            throw new IllegalArgumentException("L'isbn del prodotto non può essere nullo o vuoto");
         }
         if (nome == null || nome.isBlank()) {
             throw new IllegalArgumentException("Il nome del prodotto non può essere nullo o vuoto");
@@ -29,14 +29,14 @@ public class OggettoCarrello {
         if (quantita <= 0) {
             throw new IllegalArgumentException("La quantità deve essere strettamente positiva");
         }
-        this.id = id;
+        this.isbn = isbn;
         this.nome = nome;
         this.prezzoUnitario = prezzoUnitario;
         this.quantita = quantita;
     }
 
-    public String getId() {
-        return id;
+    public String getIsbn() {
+        return isbn;
     }
 
     public String getNome() {
@@ -74,7 +74,7 @@ public class OggettoCarrello {
 
 
     public OggettoCarrello copia() {
-        return new OggettoCarrello(id, nome, prezzoUnitario, quantita);
+        return new OggettoCarrello(isbn, nome, prezzoUnitario, quantita);
     }
 
     @Override
@@ -85,18 +85,18 @@ public class OggettoCarrello {
         if (!(o instanceof OggettoCarrello that)) {
             return false;
         }
-        return Objects.equals(id, that.id);
+        return Objects.equals(isbn, that.isbn);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(isbn);
     }
 
     @Override
     public String toString() {
         return "OggettoCarrello{" +
-                "id='" + id + '\'' +
+                "isbn='" + isbn + '\'' +
                 ", nome='" + nome + '\'' +
                 ", prezzoUnitario=" + prezzoUnitario +
                 ", quantita=" + quantita +

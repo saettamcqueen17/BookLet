@@ -1,4 +1,4 @@
-package Entities;
+package booklet.Application.Entities;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
@@ -8,8 +8,7 @@ import java.math.BigDecimal;
 public class Libro {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // id autoincrementale
-    private Long id;
+
 
     @Column(unique = true, nullable = false)
     private String isbn;
@@ -47,10 +46,6 @@ public class Libro {
         this.disponibilita = disponibilita;
     }
 
-    // getter e setter
-    public Long getId() {
-        return id;
-    }
 
     public String getIsbn() {
         return isbn;

@@ -1,7 +1,7 @@
-package Controllers;
+package booklet.Application.Controllers;
 
-import DTO.CarrelloDTO;
-import Services.CarrelloService;
+import booklet.Application.DTO.CarrelloDTO;
+import booklet.Application.Services.CarrelloService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

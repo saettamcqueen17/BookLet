@@ -5,6 +5,13 @@ spring:
     password: Keco202+-
     driver-class-name: org.postgresql.Driver
 
+
+  security:
+    oauth2:
+      resource server:
+        jwt:
+
+          issuer-uri: http://localhost:8080/realms/Booklet
   jpa:
     hibernate:
       ddl-auto: update
@@ -12,4 +19,4 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect # con Hibernate 6 viene auto-detectato, ma è ok esplicitarlo
+        dialect: org.hibernate.dialect.PostgreSQLDialect
