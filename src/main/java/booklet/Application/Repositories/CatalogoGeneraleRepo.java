@@ -15,7 +15,7 @@ public interface CatalogoGeneraleRepo extends JpaRepository<Libro, Long> {
 
     boolean existsByIsbn(String isbn);
 
-    @Transactional
+
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("""
            UPDATE Libro l

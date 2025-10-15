@@ -27,7 +27,7 @@ public final class OggettoCarrelloMapper {
             throw new IllegalArgumentException("La quantità dell'oggetto carrello non può essere nulla");
         }
         return new OggettoCarrello(
-                Objects.requireNonNull(dto.getId(), "L'id dell'oggetto carrello non può essere nullo"),
+                Objects.requireNonNull(dto.getIsbn(), "L'id dell'oggetto carrello non può essere nullo"),
                 Objects.requireNonNull(dto.getNome(), "Il nome dell'oggetto carrello non può essere nullo"),
                 Objects.requireNonNull(dto.getPrezzoUnitario(), "Il prezzo unitario non può essere nullo"),
                 dto.getQuantita()
