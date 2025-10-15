@@ -6,7 +6,7 @@ import java.time.Instant;
 @Entity
 @Table(
         name = "CatalogoPersonale",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"utente_id","libro_id"}),
+        uniqueConstraints = @UniqueConstraint(columnNames = {"utente_id","libro_isbn"}),
         indexes = {
                 @Index(name = "ix_utente_libri_utente", columnList = "utente_id"),
                 @Index(name = "ix_utente_libri_scaffale", columnList = "scaffale")
@@ -19,7 +19,7 @@ public class CatalogoPersonale {
 
     @ManyToOne(optional = false) @JoinColumn(name = "utente_id")
     private Utente utente; //
-    @ManyToOne(optional = false) @JoinColumn(name = "libro_id")
+    @ManyToOne(optional = false) @JoinColumn(name = "libro_isbn")
     private Libro libro;
 
     @Enumerated(EnumType.STRING)

@@ -15,7 +15,7 @@ public final class LibroMapper {
     public static LibroDTO toDto(Libro libro) {
         Objects.requireNonNull(libro, "Il libro da convertire non può essere nullo");
         LibroDTO dto = new LibroDTO();
-        dto.setId(libro.getId());
+
         dto.setIsbn(libro.getIsbn());
         dto.setTitolo(libro.getTitolo());
         dto.setAutore(libro.getAutore());

@@ -20,7 +20,7 @@ public class Carrello {
     public void aggiungiOggetto(OggettoCarrello oggetto) {
         Objects.requireNonNull(oggetto, "L'oggetto da aggiungere non può essere nullo");
 
-        libriNelCarrello.compute(oggetto.getISBN(), (isbn, esistente) -> {
+        libriNelCarrello.compute(oggetto.getIsbn(), (isbn, esistente) -> {
             if (esistente == null) {
                 return oggetto.copia();
             }
