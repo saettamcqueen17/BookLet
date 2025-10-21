@@ -9,9 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-//*
-// il nome della classe è più corretta a livello di business, per maggior correttezza
-//avrei dovuto chiamarla LibroRepository ;
+
 
 
 @Repository

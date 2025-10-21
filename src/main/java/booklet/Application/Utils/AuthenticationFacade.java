@@ -1,4 +1,4 @@
-package booklet.Application.Authentication;
+package booklet.Application.Utils;
 
 import booklet.Application.Entities.Utente;
 import booklet.Application.Repositories.UtenteRepository;

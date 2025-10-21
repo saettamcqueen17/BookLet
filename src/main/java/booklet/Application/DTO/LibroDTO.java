@@ -16,6 +16,7 @@ public class LibroDTO {
     private BigDecimal prezzo;
     private Integer disponibilita;
 
+    private String immagineLibro ;
     public LibroDTO() {
     }
 
@@ -24,12 +25,14 @@ public class LibroDTO {
                     String titolo,
                     String autore,
                     String casaEditrice,
+                    String immagineLibro,
                     Genere genere,
                     BigDecimal prezzo,
                     Integer disponibilita) {
         this.id = id;
         this.isbn = isbn;
         this.titolo = titolo;
+        this.immagineLibro = immagineLibro ;
         this.autore = autore;
         this.casaEditrice = casaEditrice;
         this.genere = genere;
@@ -57,8 +60,17 @@ public class LibroDTO {
         return titolo;
     }
 
+
     public void setTitolo(String titolo) {
         this.titolo = titolo;
+    }
+
+    public String getImmagineLibro(){
+        return immagineLibro;
+    }
+
+    public void setImmagineLibro(String immagineLibro) {
+        this.immagineLibro = immagineLibro;
     }
 
     public String getAutore() {

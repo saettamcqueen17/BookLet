@@ -11,29 +11,19 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * Converter "alla FakeStore":
- * - Accorpa realm roles (realm_access.roles)
- * - Accorpa client roles per uno o più clientId (resource_access.{clientId}.roles)
- * - (Opzionale) Accorpa scopes in authorities tipo SCOPE_*
- */
+
 public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 
     private final Set<String> clientIds;
     private final boolean includeScopes;
 
-    /**
-     * @param clientIds     clientId Keycloak da cui leggere i ruoli (può essere vuoto)
-     * @param includeScopes se true, aggiunge anche authorities per gli scope (SCOPE_*)
-     */
+
     public JwtAuthConverter(Collection<String> clientIds, boolean includeScopes) {
         this.clientIds = clientIds == null ? Set.of() : new HashSet<>(clientIds);
         this.includeScopes = includeScopes;
     }
 
-    /**
-     * Comodità: singolo clientId, includendo gli scope.
-     */
+
     public JwtAuthConverter(String clientId) {
         this(clientId == null ? Set.of() : Set.of(clientId), true);
     }
@@ -48,7 +38,7 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
     }
 
     private Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {
-        // 1) Realm roles
+
         Set<String> roles = new HashSet<>();
         Map<String, Object> realmAccess = jwt.getClaim("realm_access");
         if (realmAccess != null) {
@@ -58,7 +48,7 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
             }
         }
 
-        // 2) Client roles
+
         Map<String, Object> resourceAccess = jwt.getClaim("resource_access");
         if (resourceAccess != null && !clientIds.isEmpty()) {
             for (String clientId : clientIds) {
@@ -72,7 +62,7 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
             }
         }
 
-        // 3) Scopes (facoltativi): "read write profile" -> SCOPE_read, SCOPE_write, SCOPE_profile
+
         Stream<GrantedAuthority> scopeAuth = Stream.empty();
         if (includeScopes) {
             String scope = jwt.getClaimAsString("scope");
@@ -83,14 +73,14 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
             }
         }
 
-        // Mappa ruoli in ROLE_*
+
         Stream<GrantedAuthority> roleAuth = roles.stream()
                 .filter(r -> r != null && !r.isBlank())
                 .map(String::trim)
                 .map(String::toUpperCase)
                 .map(r -> new SimpleGrantedAuthority("ROLE_" + r));
 
-        // Unisci ruoli + scopes
+
         return Stream.concat(roleAuth, scopeAuth).collect(Collectors.toSet());
     }
 }

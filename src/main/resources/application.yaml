@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/miodb
+    url: jdbc:postgresql://localhost:5432/BookLet
     username: postgres
     password: Keco202+-
     driver-class-name: org.postgresql.Driver
@@ -11,7 +11,7 @@ spring:
       resource server:
         jwt:
 
-          issuer-uri: http://localhost:8080/realms/Booklet
+          issuer-uri: http://localhost:8085/realms/booklet
   jpa:
     hibernate:
       ddl-auto: update

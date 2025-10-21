@@ -28,18 +28,23 @@ public class Libro {
     private BigDecimal prezzo;
 
     @Column(nullable = false)
+    private String immagineLibro ;
+
+
+    @Column(nullable = false)
     private Integer disponibilita;
 
 
-    protected Libro() {
+    public Libro() {
     }
 
 
-    public Libro(String isbn, String titolo, String autore, String casaEditrice,
+    public Libro(String isbn, String titolo, String autore, String casaEditrice,String immagineLibro,
                  Genere genere, BigDecimal prezzo, Integer disponibilita) {
         this.isbn = isbn;
         this.titolo = titolo;
         this.autore = autore;
+        this.immagineLibro = immagineLibro ;
         this.casaEditrice = casaEditrice;
         this.genere = genere;
         this.prezzo = prezzo;
@@ -71,6 +76,12 @@ public class Libro {
         this.autore = autore;
     }
 
+    public String getImmagineLibro(){
+        return immagineLibro ;
+    }
+    public void setImmagineLibro(){
+        this.immagineLibro = immagineLibro ;
+    }
     public String getCasaEditrice() {
         return casaEditrice;
     }

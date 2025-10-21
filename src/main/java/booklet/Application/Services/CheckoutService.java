@@ -1,6 +1,5 @@
 package booklet.Application.Services;
 
-import booklet.Application.DTO.CarrelloDTO;
 import booklet.Application.Repositories.CatalogoGeneraleRepo;
 import lombok.RequiredArgsConstructor;
 import java.util.UUID;

@@ -32,10 +32,10 @@ public interface CatalogoPersonaleRepo extends JpaRepository<CatalogoPersonale, 
     @Query("""
         SELECT c FROM CatalogoPersonale c
          JOIN FETCH c.libro l
-        WHERE c.utente.id = :utenteId AND c.libro.isbn = :libroisbn
+        WHERE c.utente.id = :utenteId AND c.libro.isbn = :libroIsbn
     """)
-    Optional<CatalogoPersonale> findByUtenteIdAndLibroId(@Param("utenteId") UUID utenteId,
-                                                         @Param("libroId") Long libroId);
+    Optional<CatalogoPersonale> findByUtenteIdAndLibroIsbn(@Param("utenteId") UUID utenteId,
+                                                         @Param("libroIsbn") String libroIsbn);
 
 
 
@@ -50,10 +50,10 @@ public interface CatalogoPersonaleRepo extends JpaRepository<CatalogoPersonale, 
         UPDATE CatalogoPersonale c
            SET c.scaffale = :scaffale
          WHERE c.utente.id = :utenteId
-           AND c.libro.isbn = :libroisbn
+           AND c.libro.isbn = :libroIsbn
     """)
     int aggiornaScaffale(@Param("utenteId") UUID utenteId,
-                         @Param("libroId") Long libroId,
+                         @Param("libroIsbn") String libroIsbn,
                          @Param("scaffale") Scaffale scaffale);
 
 
@@ -64,18 +64,18 @@ public interface CatalogoPersonaleRepo extends JpaRepository<CatalogoPersonale, 
            SET c.rating = :rating,
                c.recensione = :recensione
          WHERE c.utente.id = :utenteId
-           AND c.libro.isbn = :libroisbn
+           AND c.libro.isbn = :libroIsbn
     """)
     int aggiornaValutazioneERecensione(@Param("utenteId") UUID utenteId,
-                                       @Param("libroId") Long libroId,
+                                       @Param("libroIsbn") String libroIsbn,
                                        @Param("rating") Integer rating,
                                        @Param("recensione") String recensione);
 
 
 
     @PreAuthorize("@ownership.check(#utenteId)")
-    void deleteByUtenteIdAndLibroId(@Param("utenteId") UUID utenteId,
-                                    @Param("libroId") Long libroId);
+    void deleteByUtenteIdAndLibroIsbn(@Param("utenteId") UUID utenteId,
+                                    @Param("libroIsbn") String libroIsbn);
 
     @PreAuthorize("@ownership.check(#utenteId)")
     void deleteAllByUtenteId(@Param("utenteId") UUID utenteId);
@@ -83,6 +83,6 @@ public interface CatalogoPersonaleRepo extends JpaRepository<CatalogoPersonale, 
 
 
     @PreAuthorize("@ownership.check(#utenteId)")
-    boolean existsByUtenteIdAndLibroId(@Param("utenteId") UUID utenteId,
-                                       @Param("libroId") Long libroId);
+    boolean existsByUtenteIdAndLibroIsbn(@Param("utenteId") UUID utenteId,
+                                         @Param("libroIsbn") String libroIsbn);
 }
