@@ -17,7 +17,7 @@ public final class LibroMapper {
         LibroDTO dto = new LibroDTO();
 
         dto.setIsbn(libro.getIsbn());
-        dto.setImmagineLibro(libro.getImmagineLibro());
+
         dto.setTitolo(libro.getTitolo());
         dto.setImmagineLibro(libro.getImmagineLibro());
         dto.setAutore(libro.getAutore());
@@ -35,8 +35,9 @@ public final class LibroMapper {
                 Objects.requireNonNull(dto.getIsbn(), "L'ISBN del libro non può essere nullo"),
                 Objects.requireNonNull(dto.getTitolo(), "Il titolo del libro non può essere nullo"),
                 Objects.requireNonNull(dto.getAutore(), "L'autore del libro non può essere nullo"),
-                dto.getImmagineLibro(),
+
                 dto.getCasaEditrice(),
+                dto.getImmagineLibro(),
                 dto.getGenere(),
                 Objects.requireNonNull(dto.getPrezzo(), "Il prezzo del libro non può essere nullo"),
                 Objects.requireNonNull(dto.getDisponibilita(), "La disponibilità del libro non può essere nulla")

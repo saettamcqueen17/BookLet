@@ -1,0 +1,12 @@
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.spacer {
+  flex: 1 1 auto;
+}
+.brand {
+  font-weight: bold;
+  font-size: 20px;
+}

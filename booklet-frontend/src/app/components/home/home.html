@@ -1,0 +1,7 @@
+<section class="section">
+  <h2><mat-icon>menu_book</mat-icon> Catalogo Generale</h2>
+  <div *ngIf="caricamento">Caricamento in corso...</div>
+  <div *ngIf="!caricamento" class="card-container">
+    <app-book-card *ngFor="let libro of catalogoGenerale" [libro]="libro"></app-book-card>
+  </div>
+</section>

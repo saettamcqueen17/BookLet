@@ -1,0 +1,8 @@
+<nav style="display:flex; gap:12px; padding:12px; border-bottom:1px solid #eee">
+  <a routerLink="/">Home</a>
+  <a routerLink="/redazione">Redazione</a>
+  <a routerLink="/carrello">Carrello</a>
+  <!-- sostituisci con il tuo UUID -->
+  <a [routerLink]="['/personale', '00000000-0000-0000-0000-000000000000']">Personale (demo)</a>
+</nav>
+<router-outlet></router-outlet>
