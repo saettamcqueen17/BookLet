@@ -14,12 +14,14 @@ import java.time.Instant;
 )
 public class CatalogoPersonale {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
 
     @ManyToOne(optional = false) @JoinColumn(name = "utente_id")
     private Utente utente; //
-    @ManyToOne(optional = false) @JoinColumn(name = "libro_isbn")
+     @ManyToOne(optional = false) @JoinColumn(name = "libro_isbn")
     private Libro libro;
 
     @Enumerated(EnumType.STRING)
@@ -37,7 +39,7 @@ public class CatalogoPersonale {
     public enum Scaffale { DaLeggere, StaiLeggendo, Finito }
 
     // getters/setters
-    public Long getId() { return id; }
+
     public Utente getUtente() { return utente; }
     public void setUtente(Utente utente) { this.utente = utente; }
     public Libro getLibro() { return libro; }

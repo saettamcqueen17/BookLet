@@ -1,62 +1,64 @@
 package booklet.Application.Mappers;
 
 import booklet.Application.DTO.LibroDTO;
+import booklet.Application.Entities.CatalogoGenerale;
 import booklet.Application.Entities.Libro;
 
-import java.lang.reflect.Field;
-import java.util.Objects;
+public class LibroMapper {
 
+    /* ==================== MAPPATURA da CATALOGO GENERALE ==================== */
 
-public final class LibroMapper {
-
-    private LibroMapper() {
-    }
-
-    public static LibroDTO toDto(Libro libro) {
-        Objects.requireNonNull(libro, "Il libro da convertire non può essere nullo");
+    public static LibroDTO toDto(CatalogoGenerale entity) {
         LibroDTO dto = new LibroDTO();
-
-        dto.setIsbn(libro.getIsbn());
-
-        dto.setTitolo(libro.getTitolo());
-        dto.setImmagineLibro(libro.getImmagineLibro());
-        dto.setAutore(libro.getAutore());
-        dto.setCasaEditrice(libro.getCasaEditrice());
-        dto.setGenere(libro.getGenere());
-        dto.setPrezzo(libro.getPrezzo());
-        dto.setDisponibilita(libro.getDisponibilita());
+        dto.setIsbn(entity.getIsbn());
+        dto.setTitolo(entity.getTitolo());
+        dto.setAutore(entity.getAutore());
+        dto.setCasaEditrice(entity.getCasaEditrice());
+        dto.setGenere(entity.getGenere());
+        dto.setPrezzo(entity.getPrezzo());
+        dto.setDisponibilita(entity.getDisponibilita());
+        dto.setImmagineLibro(entity.getImmagineLibro());
         return dto;
     }
 
-    public static Libro toEntity(LibroDTO dto) {
-        Objects.requireNonNull(dto, "Il DTO del libro non può essere nullo");
-
-        Libro libro = new Libro(
-                Objects.requireNonNull(dto.getIsbn(), "L'ISBN del libro non può essere nullo"),
-                Objects.requireNonNull(dto.getTitolo(), "Il titolo del libro non può essere nullo"),
-                Objects.requireNonNull(dto.getAutore(), "L'autore del libro non può essere nullo"),
-
-                dto.getCasaEditrice(),
-                dto.getImmagineLibro(),
-                dto.getGenere(),
-                Objects.requireNonNull(dto.getPrezzo(), "Il prezzo del libro non può essere nullo"),
-                Objects.requireNonNull(dto.getDisponibilita(), "La disponibilità del libro non può essere nulla")
-        );
-
-        impostaIdSePresente(libro, dto.getId());
-        return libro;
+    public static CatalogoGenerale toCatalogoGenerale(LibroDTO dto) {
+        CatalogoGenerale c = new CatalogoGenerale();
+        c.setIsbn(dto.getIsbn());
+        c.setTitolo(dto.getTitolo());
+        c.setAutore(dto.getAutore());
+        c.setCasaEditrice(dto.getCasaEditrice());
+        c.setGenere(dto.getGenere());
+        c.setPrezzo(dto.getPrezzo());
+        c.setDisponibilita(dto.getDisponibilita());
+        c.setImmagineLibro(dto.getImmagineLibro());
+        return c;
     }
 
-    private static void impostaIdSePresente(Libro libro, Long id) {
-        if (id == null) {
-            return;
-        }
-        try {
-            Field idField = Libro.class.getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(libro, id);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new IllegalStateException("Impossibile impostare l'id sul libro", e);
-        }
+    /* ==================== MAPPATURA da LIBRO ==================== */
+
+    public static LibroDTO toDto(Libro entity) {
+        LibroDTO dto = new LibroDTO();
+        dto.setIsbn(entity.getIsbn());
+        dto.setTitolo(entity.getTitolo());
+        dto.setAutore(entity.getAutore());
+        dto.setCasaEditrice(entity.getCasaEditrice());
+        dto.setGenere(entity.getGenere());
+        dto.setPrezzo(entity.getPrezzo());
+        dto.setDisponibilita(entity.getDisponibilita());
+        dto.setImmagineLibro(entity.getImmagineLibro());
+        return dto;
+    }
+
+    public static Libro toLibro(LibroDTO dto) {
+        Libro l = new Libro();
+        l.setIsbn(dto.getIsbn());
+        l.setTitolo(dto.getTitolo());
+        l.setAutore(dto.getAutore());
+        l.setCasaEditrice(dto.getCasaEditrice());
+        l.setGenere(dto.getGenere());
+        l.setPrezzo(dto.getPrezzo());
+        l.setDisponibilita(dto.getDisponibilita());
+        l.setImmagineLibro(dto.getImmagineLibro());
+        return l;
     }
 }

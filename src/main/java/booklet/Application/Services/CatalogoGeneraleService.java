@@ -1,8 +1,8 @@
 package booklet.Application.Services;
 
 import booklet.Application.DTO.LibroDTO;
-import booklet.Application.Entities.Libro;
-import booklet.Application.Mappers.LibroMapper;
+import booklet.Application.Entities.CatalogoGenerale;
+import booklet.Application.Mappers.LibroMapper; // puoi riutilizzarlo se mappa i campi uguali
 import booklet.Application.Repositories.CatalogoGeneraleRepo;
 
 import org.springframework.data.domain.Page;
@@ -24,19 +24,17 @@ public class CatalogoGeneraleService implements CarrelloService.CatalogQueryPort
         this.repo = repo;
     }
 
-
     @Override
     public Optional<CarrelloService.BookSnapshot> findByIsbn(String rawIsbn) {
         final String isbn = normalizzaIsbn(rawIsbn);
         return repo.findByIsbn(isbn)
-                .map(l -> new CarrelloService.BookSnapshot(
-                        l.getIsbn(),
-                        l.getTitolo(),
-                        l.getPrezzo(),
-                        l.getDisponibilita()
+                .map(c -> new CarrelloService.BookSnapshot(
+                        c.getIsbn(),
+                        c.getTitolo(),
+                        c.getPrezzo(),
+                        c.getDisponibilita()
                 ));
     }
-
 
     public Page<LibroDTO> findAll(Pageable pageable) {
         return repo.findAll(pageable).map(LibroMapper::toDto);
@@ -47,7 +45,7 @@ public class CatalogoGeneraleService implements CarrelloService.CatalogQueryPort
         return repo.findByIsbn(isbn).map(LibroMapper::toDto);
     }
 
-    /*  Aggiunta libri: SOLO ADMIN  */
+    /* ======== Aggiunta libri: SOLO ADMIN ======== */
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public LibroDTO aggiungiLibro(LibroDTO dto) {
@@ -59,8 +57,9 @@ public class CatalogoGeneraleService implements CarrelloService.CatalogQueryPort
         if (repo.existsByIsbn(isbn)) {
             throw new IllegalArgumentException("ISBN già presente nel catalogo: " + isbn);
         }
-        Libro entity = LibroMapper.toEntity(dto);
-        entity.setIsbn(isbn);                 // forziamo ISBN normalizzato
+
+        CatalogoGenerale entity = LibroMapper.toCatalogoGenerale(dto); // mapper adattato
+        entity.setIsbn(isbn);
         validaNonNegativo(entity.getDisponibilita(), "disponibilità");
         validaPrezzo(entity.getPrezzo());
 
@@ -71,8 +70,8 @@ public class CatalogoGeneraleService implements CarrelloService.CatalogQueryPort
     @Transactional
     public List<LibroDTO> aggiungiLibri(List<LibroDTO> dtos) {
         if (dtos == null || dtos.isEmpty()) return List.of();
-        // normalizzazione + deduplica
-        Map<String, Libro> daSalvare = new LinkedHashMap<>();
+
+        Map<String, CatalogoGenerale> daSalvare = new LinkedHashMap<>();
         for (LibroDTO d : dtos) {
             Objects.requireNonNull(d, "dto nullo nella lista");
             if (d.getIsbn() == null || d.getIsbn().isBlank()) {
@@ -82,13 +81,18 @@ public class CatalogoGeneraleService implements CarrelloService.CatalogQueryPort
             if (repo.existsByIsbn(isbn) || daSalvare.containsKey(isbn)) {
                 throw new IllegalArgumentException("ISBN duplicato: " + isbn);
             }
-            Libro e = LibroMapper.toEntity(d);
+
+            CatalogoGenerale e = LibroMapper.toCatalogoGenerale(d);
             e.setIsbn(isbn);
             validaNonNegativo(e.getDisponibilita(), "disponibilità");
             validaPrezzo(e.getPrezzo());
             daSalvare.put(isbn, e);
         }
-        return repo.saveAll(daSalvare.values()).stream().map(LibroMapper::toDto).collect(Collectors.toList());
+
+        return repo.saveAll(daSalvare.values())
+                .stream()
+                .map(LibroMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     /* ======== Rimozione libri ======== */
@@ -109,16 +113,11 @@ public class CatalogoGeneraleService implements CarrelloService.CatalogQueryPort
         }
     }
 
-    /* ======== Checkout: scala disponibilità in modo atomico ======== */
-    /**
-     * Scala lo stock per ogni (isbn -> quantità) in un’unica transazione.
-     * Se anche uno solo non ha stock sufficiente, solleva eccezione e fa rollback di tutto.
-     */
+    /* ======== Checkout ======== */
     @Transactional
     public void aggiornaDisponibilitaPerCheckout(Map<String, Integer> libriEQuantita) {
         if (libriEQuantita == null || libriEQuantita.isEmpty()) return;
 
-        // Validazione di base prima di toccare il DB
         for (Map.Entry<String, Integer> e : libriEQuantita.entrySet()) {
             final String isbn = normalizzaIsbn(e.getKey());
             final Integer qta = e.getValue();
@@ -127,17 +126,14 @@ public class CatalogoGeneraleService implements CarrelloService.CatalogQueryPort
             }
         }
 
-        // Aggiornamenti condizionati (row-level atomic): UPDATE ... WHERE disponibilita >= qta
         for (Map.Entry<String, Integer> e : libriEQuantita.entrySet()) {
             String isbn = normalizzaIsbn(e.getKey());
             int qta = e.getValue();
             int updated = repo.decrementaDisponibilitaSeSufficiente(isbn, qta);
             if (updated == 0) {
-                // nessun record aggiornato => stock insufficiente o libro inesistente
                 throw new IllegalStateException("Stock insufficiente o libro non trovato per ISBN " + isbn);
             }
         }
-
     }
 
 

@@ -14,7 +14,7 @@ public class CatalogoRedazione {
     @OneToOne
     @MapsId
     @JoinColumn(name = "isbn", referencedColumnName = "isbn")
-    private Libro libro;
+    private CatalogoGenerale libro;
 
     @Column(nullable = false)
     private Genere genere;
@@ -37,8 +37,8 @@ public class CatalogoRedazione {
     public String getIsbn() { return isbn; }
     public void setIsbn(String isbn) { this.isbn = isbn; }
 
-    public Libro getLibro() { return libro; }
-    public void setLibro(Libro libro) { this.libro = libro; }
+    public CatalogoGenerale getLibro() { return libro; }
+    public void setLibro(CatalogoGenerale libro) { this.libro = libro; }
 
     public Genere getGenere() { return genere; }
     public void setGenere(Genere genere) { this.genere = this.genere; }

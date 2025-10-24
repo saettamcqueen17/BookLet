@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 public class LibroDTO {
 
-    private Long id;
+
     private String isbn;
     private String titolo;
     private String autore;
@@ -20,7 +20,7 @@ public class LibroDTO {
     public LibroDTO() {
     }
 
-    public LibroDTO(Long id,
+    public LibroDTO(
                     String isbn,
                     String titolo,
                     String autore,
@@ -29,7 +29,7 @@ public class LibroDTO {
                     Genere genere,
                     BigDecimal prezzo,
                     Integer disponibilita) {
-        this.id = id;
+
         this.isbn = isbn;
         this.titolo = titolo;
         this.immagineLibro = immagineLibro ;
@@ -40,13 +40,9 @@ public class LibroDTO {
         this.disponibilita = disponibilita;
     }
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+
+
 
     public String getIsbn() {
         return isbn;

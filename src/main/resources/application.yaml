@@ -20,3 +20,8 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+        spring:
+          jpa:
+            hibernate:
+              ddl-auto: update

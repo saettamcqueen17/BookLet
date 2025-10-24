@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "libro")
-public class Libro {
+public class Libro  {
 
     @Id
 
@@ -19,6 +19,7 @@ public class Libro {
     @Column(nullable = false)
     private String autore;
 
+    @Column(nullable = true)
     private String casaEditrice;
 
     @Enumerated(EnumType.STRING)
@@ -72,6 +73,9 @@ public class Libro {
         return autore;
     }
 
+
+
+
     public void setAutore(String autore) {
         this.autore = autore;
     }
@@ -79,7 +83,7 @@ public class Libro {
     public String getImmagineLibro(){
         return immagineLibro ;
     }
-    public void setImmagineLibro(){
+    public void setImmagineLibro(String immagineLibro){
         this.immagineLibro = immagineLibro ;
     }
     public String getCasaEditrice() {

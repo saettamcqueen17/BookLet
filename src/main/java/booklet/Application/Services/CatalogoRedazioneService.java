@@ -1,5 +1,6 @@
 package booklet.Application.Services;
 
+import booklet.Application.Entities.CatalogoGenerale;
 import booklet.Application.Entities.CatalogoRedazione;
 import booklet.Application.Entities.Genere;
 import booklet.Application.Entities.Libro;
@@ -24,7 +25,7 @@ public class CatalogoRedazioneService {
 
     @Transactional
     public CatalogoRedazione aggiungiScheda(String isbn, Genere genere, String recensione, Double voto) {
-        Libro libro = generaleRepo.findByIsbn(isbn)
+        CatalogoGenerale libro = generaleRepo.findByIsbn(isbn)
                 .orElseThrow(() -> new IllegalArgumentException("Libro non trovato"));
 
         CatalogoRedazione scheda = new CatalogoRedazione();
@@ -54,7 +55,7 @@ public class CatalogoRedazioneService {
     public CatalogoRedazione aggiungiLibroARedazione(String isbn, Genere genere,
                                                      String recensione, Double voto) {
 
-        Libro libro = generaleRepo.findByIsbn(isbn)
+        CatalogoGenerale libro = generaleRepo.findByIsbn(isbn)
                 .orElseThrow(() -> new IllegalArgumentException("Libro non trovato nel catalogo generale."));
 
 
