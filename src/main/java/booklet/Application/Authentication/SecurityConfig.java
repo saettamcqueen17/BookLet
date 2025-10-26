@@ -27,10 +27,19 @@ import java.util.List;
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/public/**").permitAll()
+
+                        .requestMatchers(
+                                "/api/public/**",
+                                "/api/catalogo/generale"   // ← aggiunta qui
+                        ).permitAll()
+
+
                         .requestMatchers("/api/admin/**").hasRole("CLIENT_ADMIN")
                         .requestMatchers("/api/user/**").hasRole("CLIENT_USER")
-                        .anyRequest().authenticated())
+
+                        
+                        .anyRequest().authenticated()
+                )
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtConverter))
                 );

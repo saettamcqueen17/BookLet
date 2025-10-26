@@ -2,9 +2,11 @@ package booklet.Application.Services;
 
 import booklet.Application.DTO.LibroDTO;
 import booklet.Application.Entities.CatalogoGenerale;
+import booklet.Application.Entities.Libro;
 import booklet.Application.Mappers.LibroMapper; // puoi riutilizzarlo se mappa i campi uguali
 import booklet.Application.Repositories.CatalogoGeneraleRepo;
 
+import booklet.Application.Repositories.LibroRepo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,11 +20,14 @@ import java.util.stream.Collectors;
 @Service
 public class CatalogoGeneraleService implements CarrelloService.CatalogQueryPort {
 
+    private final LibroRepo libroRepo;
     private final CatalogoGeneraleRepo repo;
 
-    public CatalogoGeneraleService(CatalogoGeneraleRepo repo) {
+    public CatalogoGeneraleService(LibroRepo libroRepo, CatalogoGeneraleRepo repo) {
+        this.libroRepo = libroRepo;
         this.repo = repo;
     }
+
 
     @Override
     public Optional<CarrelloService.BookSnapshot> findByIsbn(String rawIsbn) {
@@ -147,9 +152,14 @@ public class CatalogoGeneraleService implements CarrelloService.CatalogQueryPort
         }
     }
 
+    public List<Libro> getCatalogoDisponibile() {
+        return libroRepo.findByDisponibilitaGreaterThan(0);
+    }
     private static void validaPrezzo(BigDecimal prezzo) {
         if (prezzo == null || prezzo.signum() < 0) {
             throw new IllegalArgumentException("Prezzo mancante o negativo");
         }
     }
+
+
 }

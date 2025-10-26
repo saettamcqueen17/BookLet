@@ -1,12 +1,14 @@
 package booklet.Application.Repositories;
 
 import booklet.Application.Entities.CatalogoGenerale;
+import booklet.Application.Entities.Libro;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -32,4 +34,5 @@ public interface CatalogoGeneraleRepo extends JpaRepository<CatalogoGenerale, St
     int incrementaDisponibilita(@Param("isbn") String isbn, @Param("qta") int qta);
 
     void deleteByIsbn(String isbn);
+
 }
