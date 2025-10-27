@@ -1,21 +1,37 @@
-<mat-card class="book-card">
+<ng-container *ngIf="libro as l">
+  <mat-card class="libro-card">
+    <img mat-card-image
+         [src]="l.immagineCopertina || 'assets/placeholder.png'"
+         [alt]="l.titolo || 'Copertina libro'" />
 
-  <mat-card-header>
-    <div mat-card-avatar class="book-avatar">
-      <img [src]="libro.immagineUrl" alt="{{ libro.titolo }}" />
+    <mat-card-title>{{ l.titolo }}</mat-card-title>
+    <mat-card-subtitle>{{ l.autore }}</mat-card-subtitle>
+
+    <mat-card-content>
+      <p><strong>Casa editrice:</strong> {{ l.casaEditrice }}</p>
+      <p><strong>Genere:</strong> {{ l.categoria }}</p>
+      <p><strong>Prezzo:</strong> {{ l.prezzo | currency:'EUR':'symbol' }}</p>
+
+      <!-- SAFE CHECK sulla disponibilità -->
+      <p *ngIf="(l.disponibilita ?? 0) > 0; else esaurito">
+        Disponibilità: {{ l.disponibilita ?? 0 }}
+      </p>
+      <ng-template #esaurito>
+        <span class="text-danger">Esaurito</span>
+      </ng-template>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-raised-button
+              color="primary"
+              (click)="aggiungiAlCarrello()"
+              [disabled]="(l.disponibilita ?? 0) === 0">
+        Aggiungi al carrello
+      </button>
+    </mat-card-actions>
+
+    <div class="feedback" *ngIf="aggiunto">
+      ✅ Aggiunto al carrello!
     </div>
-    <mat-card-title>{{ libro.titolo }}</mat-card-title>
-    <mat-card-subtitle>{{ libro.autore }}</mat-card-subtitle>
-  </mat-card-header>
-
-  <img mat-card-image [src]="libro.immagineUrl" alt="{{ libro.titolo }}" />
-
-  
-
-  <mat-card-actions>
-    <button mat-raised-button color="primary" (click)="aggiungi()">
-      <mat-icon>add_shopping_cart</mat-icon> Aggiungi
-    </button>
-  </mat-card-actions>
-
-</mat-card>
+  </mat-card>
+</ng-container>

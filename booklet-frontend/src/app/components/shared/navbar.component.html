@@ -1,8 +1,8 @@
 <mat-toolbar color="primary" class="navbar">
   <span class="brand">📚 BookLet</span>
   <span class="spacer"></span>
-  <a mat-button routerLink="/">Home</a>
-  <a mat-button routerLink="/catalogo-generale">Catalogo</a>
+  <a mat-button routerLink="/">CatalogoGenerale</a>
+  <a mat-button routerLink="/catalogo-Personale">CatalogoPersonale</a>
   <a mat-button routerLink="/carrello">Carrello</a>
   <a mat-button routerLink="/redazione">Redazione</a>
   <a mat-button *ngIf="isAuth() && myCatalogoLink() as link" [routerLink]="link">Il mio catalogo</a>

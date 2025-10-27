@@ -1,25 +1,10 @@
-.book-card {
-  width: 280px;
-  margin: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  background-color: #fff;
-  transition: transform 0.2s, box-shadow 0.2s;
+.libro-card {
+  width: 260px;
+  margin: 12px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+  border-radius: 12px;
 }
-
-.book-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
-}
-
-.book-avatar img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-mat-card-image {
-  height: 200px;
+mat-card img {
+  height: 300px;
   object-fit: cover;
 }

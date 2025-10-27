@@ -1,4 +1,49 @@
-/* You can add global styles to this file, and also import other style files */
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
+}
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/* Sfondo pagina (nome file con spazio) */
+html {
+  background-image: url("assets/sfondo booklet.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+}
+
+/* Evita che Angular Material o container coprano lo sfondo */
+body,
+app-root,
+mat-sidenav-container,
+mat-sidenav-content {
+  background: transparent !important;
+}
+
+/* Velo leggero per aumentare la leggibilità del testo sullo sfondo */
+html::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,0.20);
+  pointer-events: none;
+  z-index: 0;
+}
+
+app-root { position: relative; z-index: 1; }
+
+/* ==== KILL SWITCH dei vecchi link in pagina (ancore nude) ==== */
+/* nasconde eventuali <a> “sfuggiti” piazzati direttamente nel body */
+body > a[href],
+body > p > a[href] {
+  display: none !important;
+}
+body {
+  background-image: url('/assets/sfondo booklet.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+}

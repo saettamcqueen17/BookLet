@@ -3,7 +3,7 @@ export const environment = {
   apiBase: 'http://localhost:8080',   // URL backend in deploy
   keycloak: {
     url: 'http://localhost:8085',
-    realm: 'booklet',
-    clientId: 'booklet-frontend'
+    realm: 'Booklet',
+    clientId: 'booklet_client_frontend'
   }
 };

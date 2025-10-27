@@ -1,8 +1,18 @@
-<nav style="display:flex; gap:12px; padding:12px; border-bottom:1px solid #eee">
-  <a routerLink="/">Home</a>
-  <a routerLink="/redazione">Redazione</a>
-  <a routerLink="/carrello">Carrello</a>
-  <!-- sostituisci con il tuo UUID -->
-  <a [routerLink]="['/personale', '00000000-0000-0000-0000-000000000000']">Personale (demo)</a>
-</nav>
-<router-outlet></router-outlet>
+<mat-toolbar color="primary" class="navbar">
+  <span class="brand">📚 BookLet</span>
+  <span class="spacer"></span>
+
+  <a mat-button routerLink="/catalogo-generale">Catalogo Generale</a>
+  <a mat-button routerLink="/catalogo-personale">Catalogo Personale</a>
+  <a mat-button routerLink="/carrello">Carrello</a>
+  <a mat-button routerLink="/redazione">Redazione</a>
+
+
+  <a mat-button *ngIf="isAuth() && myCatalogoLink() as link" [routerLink]="link">
+    Il mio catalogo
+  </a>
+
+  <span class="spacer"></span>
+  <button mat-button *ngIf="!isAuth()" (click)="login()">Login</button>
+  <button mat-button *ngIf="isAuth()" (click)="logout()">Logout</button>
+</mat-toolbar>
