@@ -1,0 +1,73 @@
+<section class="carrello">
+  <header class="carrello__intestazione">
+    <h1>Il tuo carrello</h1>
+    <div class="carrello__azioni">
+      <button mat-stroked-button color="warn" (click)="svuota()" [disabled]="oggetti.length === 0 || loading()">
+        <mat-icon>delete_sweep</mat-icon>
+        Svuota carrello
+      </button>
+    </div>
+  </header>
+
+  <div class="stato" *ngIf="loading()">
+    <mat-icon>hourglass_top</mat-icon>
+    <p>Caricamento del carrello in corso…</p>
+  </div>
+
+  <div class="stato stato--errore" *ngIf="!loading() && error() as err">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ err }}</p>
+  </div>
+
+  <section class="carrello__contenuto" *ngIf="!loading() && !error()">
+    <p *ngIf="oggetti.length === 0" class="vuoto">Il carrello è vuoto.</p>
+
+    <table class="carrello__tabella" *ngIf="oggetti.length > 0">
+      <thead>
+      <tr>
+        <th>ISBN</th>
+        <th>Titolo</th>
+        <th class="numero">Prezzo unitario</th>
+        <th class="numero">Quantità</th>
+        <th class="numero">Subtotale</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let oggetto of oggetti">
+        <td>{{ oggetto.isbn }}</td>
+
+        <td class="numero">{{ oggetto.prezzoUnitario | currency:'EUR':'symbol' }}</td>
+        <td class="numero">
+          <mat-form-field appearance="outline" class="qty-field">
+            <input
+              matInput
+              type="number"
+              min="0"
+              [ngModel]="oggetto.quantita"
+              (ngModelChange)="aggiornaQuantita(oggetto.isbn, $event)"
+            />
+          </mat-form-field>
+        </td>
+        <td class="numero">{{ oggetto.prezzoUnitario * oggetto.quantita | currency:'EUR':'symbol' }}</td>
+        <td class="azioni">
+          <button mat-icon-button color="warn" (click)="rimuovi(oggetto.isbn)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <div class="carrello__riepilogo" *ngIf="oggetti.length > 0">
+      <div class="totale">
+        <span>Articoli totali:</span>
+        <strong>{{ numeroTotale }}</strong>
+      </div>
+      <div class="totale">
+        <span>Totale ordine:</span>
+        <strong>{{ totale | currency:'EUR':'symbol' }}</strong>
+      </div>
+    </div>
+  </section>
+</section>

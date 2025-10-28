@@ -1,0 +1,22 @@
+<section class="catalogo-personale" *ngIf="catalogo() as dati">
+  <header class="intestazione">
+    <h1>Catalogo di {{ dati.username || dati.utenteId }}</h1>
+    <p class="conteggio">Totale libri: {{ totaleLibri }}</p>
+  </header>
+
+  <div class="stato" *ngIf="loading()">
+    <p>Caricamento in corso…</p>
+  </div>
+
+  <div class="stato stato--errore" *ngIf="!loading() && error() as err">
+    <p>{{ err }}</p>
+  </div>
+
+  <div class="griglia" *ngIf="!loading() && !error() && dati.libri.length > 0; else emptyState">
+    <app-personal-book-card *ngFor="let libro of dati.libri" [book]="libro"></app-personal-book-card>
+  </div>
+</section>
+
+<ng-template #emptyState>
+  <p *ngIf="!loading() && !error()">Nessun libro presente nel catalogo personale.</p>
+</ng-template>

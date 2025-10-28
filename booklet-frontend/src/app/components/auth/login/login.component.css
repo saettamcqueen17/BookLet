@@ -1,0 +1,18 @@
+.login {
+  margin: 4rem auto;
+  padding: 2.5rem;
+  max-width: 480px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+}
+
+.login h1 {
+  margin-bottom: 1rem;
+}
+
+.login p {
+  margin-bottom: 2rem;
+  color: #555;
+}

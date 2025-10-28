@@ -1,0 +1,104 @@
+.carrello {
+  padding: 2rem clamp(1rem, 4vw, 4rem);
+}
+
+.carrello__intestazione {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.carrello__intestazione h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+}
+
+.carrello__azioni {
+  display: flex;
+  gap: 1rem;
+}
+
+.stato {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #555;
+  margin: 2rem 0;
+}
+
+.stato mat-icon {
+  font-size: 1.5rem;
+}
+
+.stato--errore {
+  color: #c62828;
+}
+
+.carrello__tabella {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.carrello__tabella th,
+.carrello__tabella td {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.carrello__tabella thead {
+  background: rgba(79, 70, 229, 0.08);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: #424242;
+}
+
+.carrello__tabella tbody tr:hover {
+  background: rgba(79, 70, 229, 0.05);
+}
+
+.numero {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.titolo {
+  font-weight: 600;
+}
+
+.qty-field {
+  width: 90px;
+}
+
+.azioni {
+  text-align: center;
+}
+
+.carrello__riepilogo {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.carrello__riepilogo .totale {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 1.1rem;
+}
+
+.carrello__riepilogo strong {
+  font-size: 1.3rem;
+}
+
+.vuoto {
+  color: #666;
+}
