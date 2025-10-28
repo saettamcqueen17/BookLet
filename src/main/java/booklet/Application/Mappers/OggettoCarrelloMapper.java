@@ -15,7 +15,6 @@ public final class OggettoCarrelloMapper {
         Objects.requireNonNull(entity, "L'oggetto carrello da convertire non può essere nullo");
         return new OggettoCarrelloDTO(
                 entity.getIsbn(),
-                entity.getNome(),
                 entity.getPrezzoUnitario(),
                 entity.getQuantita()
         );
@@ -28,7 +27,6 @@ public final class OggettoCarrelloMapper {
         }
         return new OggettoCarrello(
                 Objects.requireNonNull(dto.getIsbn(), "L'id dell'oggetto carrello non può essere nullo"),
-                Objects.requireNonNull(dto.getNome(), "Il nome dell'oggetto carrello non può essere nullo"),
                 Objects.requireNonNull(dto.getPrezzoUnitario(), "Il prezzo unitario non può essere nullo"),
                 dto.getQuantita()
         );

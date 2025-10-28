@@ -1,3 +1,4 @@
+// TypeScript
 import { Component, Input } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -11,32 +12,16 @@ export interface Libro {
   autore?: string;
   prezzo?: number;
   immagineCopertina?: string;
+  casaEditrice?: string;
+  categoria?: string;
+  disponibilita?: number;
 }
 
 @Component({
   selector: 'app-libro-card',
   standalone: true,
   imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, CurrencyPipe],
-  template: `
-    <mat-card class="libro-card">
-      <img *ngIf="libro.immagineCopertina" mat-card-image [src]="libro.immagineCopertina" [alt]="libro.titolo" />
-      <mat-card-title>{{ libro.titolo }}</mat-card-title>
-      <mat-card-subtitle>{{ libro.autore }}</mat-card-subtitle>
-
-      <mat-card-content>
-        <p *ngIf="libro.prezzo != null">
-          <strong>Prezzo:</strong> {{ libro.prezzo | currency:'EUR':'symbol' }}
-        </p>
-      </mat-card-content>
-
-      <mat-card-actions align="end">
-        <button mat-raised-button color="primary" (click)="aggiungiAlCarrello()">
-          <mat-icon>add_shopping_cart</mat-icon>
-          Aggiungi al carrello
-        </button>
-      </mat-card-actions>
-    </mat-card>
-  `,
+  templateUrl: './libro-card.component.html',
   styles: [`
     .libro-card { max-width: 360px; }
   `]
@@ -44,10 +29,19 @@ export interface Libro {
 export class LibroCardComponent {
   @Input() libro!: Libro;
 
+  aggiunto = false;
+
   constructor(private carrelloService: CarrelloService) {}
 
   aggiungiAlCarrello(): void {
     if (!this.libro?.isbn) return;
-    this.carrelloService.aggiungiAlCarrello(this.libro.isbn).subscribe();
+    if ((this.libro.disponibilita ?? 0) === 0) return;
+
+    this.carrelloService.aggiungiAlCarrello(this.libro.isbn).subscribe({
+      next: () => {
+        this.aggiunto = true;
+        setTimeout(() => (this.aggiunto = false), 2000);
+      }
+    });
   }
 }

@@ -62,7 +62,7 @@ public class CarrelloService {
             }
 
             if (qtyAttuale == 0) {
-                carrello.aggiungiOggetto(new OggettoCarrello(isbn, book.titolo(), book.prezzo(), quantita));
+                carrello.aggiungiOggetto(new OggettoCarrello(isbn,  book.prezzo(), quantita));
             } else {
                 carrello.aggiornaQuantita(isbn, (int) richiestaTotale);
             }
@@ -95,7 +95,7 @@ public class CarrelloService {
 
             if (carrello.getOggetto(isbn).isEmpty()) {
 
-                carrello.aggiungiOggetto(new OggettoCarrello(isbn, book.titolo(), book.prezzo(), nuovaQuantita));
+                carrello.aggiungiOggetto(new OggettoCarrello(isbn,  book.prezzo(), nuovaQuantita));
             } else {
                 carrello.aggiornaQuantita(isbn, nuovaQuantita);
             }

@@ -31,7 +31,7 @@ public class Carrello {
     }
 
     private void verificaCompatibilita(OggettoCarrello esistente, OggettoCarrello nuovo) {
-        if (!Objects.equals(esistente.getNome(), nuovo.getNome())) {
+        if (!Objects.equals(esistente.getIsbn(), nuovo.getIsbn())) {
             throw new IllegalArgumentException("Nome prodotto differente per lo stesso id");
         }
         if (esistente.getPrezzoUnitario().compareTo(nuovo.getPrezzoUnitario()) != 0) {

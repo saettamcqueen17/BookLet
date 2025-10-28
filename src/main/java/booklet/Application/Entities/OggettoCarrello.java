@@ -11,18 +11,15 @@ import java.util.Objects;
 public class OggettoCarrello {
 
     private final String isbn;
-    private final String nome;
     private final BigDecimal prezzoUnitario;
     private int quantita;
 
 
-    public OggettoCarrello(String isbn , String nome, BigDecimal prezzoUnitario, int quantita) {
+    public OggettoCarrello(String isbn ,  BigDecimal prezzoUnitario, int quantita) {
         if (isbn == null || isbn.isBlank()) {
             throw new IllegalArgumentException("L'isbn del prodotto non può essere nullo o vuoto");
         }
-        if (nome == null || nome.isBlank()) {
-            throw new IllegalArgumentException("Il nome del prodotto non può essere nullo o vuoto");
-        }
+
         if (prezzoUnitario == null || prezzoUnitario.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Il prezzo unitario deve essere maggiore o uguale a zero");
         }
@@ -30,7 +27,6 @@ public class OggettoCarrello {
             throw new IllegalArgumentException("La quantità deve essere strettamente positiva");
         }
         this.isbn = isbn;
-        this.nome = nome;
         this.prezzoUnitario = prezzoUnitario;
         this.quantita = quantita;
     }
@@ -39,9 +35,6 @@ public class OggettoCarrello {
         return isbn;
     }
 
-    public String getNome() {
-        return nome;
-    }
 
     public BigDecimal getPrezzoUnitario() {
         return prezzoUnitario;
@@ -74,7 +67,7 @@ public class OggettoCarrello {
 
 
     public OggettoCarrello copia() {
-        return new OggettoCarrello(isbn, nome, prezzoUnitario, quantita);
+        return new OggettoCarrello(isbn,  prezzoUnitario, quantita);
     }
 
     @Override
@@ -97,7 +90,7 @@ public class OggettoCarrello {
     public String toString() {
         return "OggettoCarrello{" +
                 "isbn='" + isbn + '\'' +
-                ", nome='" + nome + '\'' +
+
                 ", prezzoUnitario=" + prezzoUnitario +
                 ", quantita=" + quantita +
                 '}';

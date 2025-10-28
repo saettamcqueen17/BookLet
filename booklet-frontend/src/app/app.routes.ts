@@ -20,29 +20,30 @@ export const authGuard: CanActivateFn = async (route, state) => {
 
   if (!isBrowser) return true;
 
-  const logged = await auth.isLoggedIn();
-  if (!logged) {
-    await auth.login(state.url || '/');
-    return false;
-  }
-
-  const requiredRole = route.data?.['role'] as string | undefined;
-  if (requiredRole) {
-    const roles = auth.getRoles();
-    if (!roles.includes(requiredRole)) {
-      return router.parseUrl('/home');
+  return auth.isLoggedIn().then((logged) => {
+    if (!logged) {
+      void auth.login(state.url || router.url || '/');
+      return false;
     }
-  }
-  return true;
-};
 
-export const routes: Routes = [
-  { path: '', component: CatalogoGeneraleComponent },
-  { path: 'home', component: HomeComponent },
-  { path: 'catalogo', component: CatalogoGeneraleComponent },
-  { path: 'redazione', component: CatalogoRedazioneComponent, canActivate: [authGuard], data: { role: 'REDAZIONE' } },
-  { path: 'login', component: LoginComponent },
-  { path: 'personale/:utenteId', component: CatalogoPersonaleComponent, canActivate: [authGuard] },
-  { path: 'carrello', component: CarrelloComponent, canActivate: [authGuard] },
-  { path: '**', redirectTo: 'home' },
-];
+    const requiredRole = route.data?.['role'] as string | undefined;
+    if (requiredRole) {
+      const roles = auth.getRoles();
+      if (!roles.includes(requiredRole)) {
+        return router.parseUrl('/home');
+      }
+    }
+    return true;
+  });
+}
+
+  export const routes: Routes = [
+    {path: '', component: CatalogoGeneraleComponent},
+    {path: 'home', component: HomeComponent},
+    {path: 'catalogo', component: CatalogoGeneraleComponent},
+    {path: 'redazione', component: CatalogoRedazioneComponent, canActivate: [authGuard], data: {role: 'REDAZIONE'}},
+    {path: 'login', component: LoginComponent},
+    {path: 'personale/:utenteId', component: CatalogoPersonaleComponent, canActivate: [authGuard]},
+    {path: 'carrello', component: CarrelloComponent, canActivate: [authGuard]},
+    {path: '**', redirectTo: 'home'}];
+

@@ -6,16 +6,13 @@ import java.math.BigDecimal;
 public class OggettoCarrelloDTO {
 
     private String isbn;
-    private String nome;
     private BigDecimal prezzoUnitario;
     private Integer quantita;
 
-    public OggettoCarrelloDTO() {
-    }
 
-    public OggettoCarrelloDTO(String isbn, String nome, BigDecimal prezzoUnitario, Integer quantita) {
+
+    public OggettoCarrelloDTO(String isbn,  BigDecimal prezzoUnitario, Integer quantita) {
         this.isbn = isbn;
-        this.nome = nome;
         this.prezzoUnitario = prezzoUnitario;
         this.quantita = quantita;
     }
@@ -28,13 +25,7 @@ public class OggettoCarrelloDTO {
         this.isbn = isbn;
     }
 
-    public String getNome() {
-        return nome;
-    }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
 
     public BigDecimal getPrezzoUnitario() {
         return prezzoUnitario;
@@ -51,4 +42,6 @@ public class OggettoCarrelloDTO {
     public void setQuantita(Integer quantita) {
         this.quantita = quantita;
     }
+
+
 }

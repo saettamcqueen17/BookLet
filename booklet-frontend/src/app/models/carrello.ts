@@ -1,6 +1,5 @@
 export interface OggettoCarrelloDTO {
   isbn: string;
-  nome: string;
   prezzoUnitario: number;
   quantita: number;
 }

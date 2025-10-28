@@ -52,7 +52,7 @@ class CatalogoPersonaleRepoTest {
         l.setCasaEditrice("Bompiani");
         l.setGenere(Genere.ROMANZO_ROMANTICO);
 
-        libriRepo.saveAndFlush(l);
+        //libriRepo.saveAndFlush(l);
 
 
         u = new Utente();
