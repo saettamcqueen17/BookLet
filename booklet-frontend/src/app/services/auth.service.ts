@@ -20,6 +20,9 @@ export class AuthService {
   private readonly RTOK_KEY = 'kc_refreshToken';
   private readonly IDTOK_KEY = 'kc_idToken';
 
+  private startupInit?: Promise<void>;
+
+
   constructor(@Inject(PLATFORM_ID) platformId: Object) {
     this.isBrowser = isPlatformBrowser(platformId);
     if (this.isBrowser) {
@@ -37,6 +40,21 @@ export class AuthService {
         this.kc?.updateToken(30).catch(() => this.login(window.location.pathname));
       };
     }
+  }
+
+  initSession(): Promise<void> {
+    if (!this.isBrowser || !this.kc) return Promise.resolve();
+    if (!this.startupInit) {
+      this.startupInit = this.ensureInit()
+        .then(async (authenticated) => {
+          if (!authenticated) {
+            await this.login(window.location.pathname);
+          }
+        })
+        .then(() => void 0)
+        .catch(() => void 0);
+    }
+    return this.startupInit;
   }
 
   isAuthenticatedSig = (): boolean => this.kc?.authenticated === true;

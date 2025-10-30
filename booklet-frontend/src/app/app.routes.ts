@@ -22,8 +22,8 @@ export const authGuard: CanActivateFn = async (route, state) => {
 
   return auth.isLoggedIn().then((logged) => {
     if (!logged) {
-      void auth.login(state.url || router.url || '/');
-      return false;
+      return router.parseUrl('/login');
+
     }
 
     const requiredRole = route.data?.['role'] as string | undefined;

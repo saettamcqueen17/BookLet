@@ -2,6 +2,8 @@ html, body {
   height: 100%;
   margin: 0;
   font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: #f5f7fb;
+  color: #212121;
 }
 
 /* Sfondo pagina (nome file con spazio) */

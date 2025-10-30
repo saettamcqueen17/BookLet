@@ -8,7 +8,7 @@ import {NavbarComponent} from './components/shared/navbar.component';
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule, RouterOutlet, MatToolbarModule, NavbarComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA], // tollera <app-navbar> se non standalone
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <mat-toolbar class="navbar" role="navigation">
       <span style="font-weight:700">BookLet</span>
