@@ -1,3 +1,18 @@
-<div class="catalogo-container">
-  <app-libro-card *ngFor="let libro of libri" [libro]="libro"></app-libro-card>
-</div>
+<section class="section">
+  <h2>Catalogo Completo</h2>
+
+  <div *ngIf="caricamento" class="loading">Caricamento in corso...</div>
+
+  <div *ngIf="!caricamento && errore" class="error">{{ errore }}</div>
+
+  <div *ngIf="!caricamento && !errore && libri.length === 0" class="empty">
+    Nessun libro disponibile al momento.
+  </div>
+
+  <div class="catalogo-container" *ngIf="!caricamento && !errore && libri.length > 0">
+    <app-libro-card
+      *ngFor="let libro of libri; trackBy: trackByIsbn"
+      [libro]="libro"
+    ></app-libro-card>
+  </div>
+</section>

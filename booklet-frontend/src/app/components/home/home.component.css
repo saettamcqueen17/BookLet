@@ -43,10 +43,6 @@
   align-items: stretch;
 }
 
-.catalogo-container app-libro-card {
-  height: 100%;
-}
-
 .loading,
 .error,
 .empty {
@@ -70,4 +66,10 @@
 .empty {
   background: rgba(0, 0, 0, 0.08);
   color: #424242;
+}
+
+.azioni {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
 }

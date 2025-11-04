@@ -1,9 +1,32 @@
 <section class="section">
-  <h2><mat-icon>menu_book</mat-icon> Catalogo Generale</h2>
+  <h2>
+    <mat-icon>menu_book</mat-icon>
+    Anteprima Catalogo
+  </h2>
+
   <div *ngIf="caricamento" class="loading">Caricamento in corso...</div>
-  <div *ngIf="erroreCaricamento" class="error">Non è stato possibile recuperare il catalogo. Riprova più tardi.</div>
-  <div *ngIf="!caricamento && !erroreCaricamento && catalogoGenerale.length === 0" class="empty">Nessun libro disponibile al momento.</div>
-  <div class="catalogo-container" *ngIf="!caricamento && !erroreCaricamento && catalogoGenerale.length > 0">
-    <app-libro-card *ngFor="let libro of catalogoGenerale" [libro]="libro"></app-libro-card>
+
+  <div *ngIf="!caricamento && errore" class="error">
+    Errore nel caricamento del catalogo. Riprova più tardi.
+  </div>
+
+  <div *ngIf="!caricamento && !errore && anteprimaLibri.length === 0" class="empty">
+    Nessun libro disponibile al momento.
+  </div>
+
+  <div
+    class="catalogo-container"
+    *ngIf="!caricamento && !errore && anteprimaLibri.length > 0"
+  >
+    <app-libro-card
+      *ngFor="let libro of anteprimaLibri"
+      [libro]="libro"
+    ></app-libro-card>
+  </div>
+
+  <div class="azioni">
+    <button routerLink="/catalogo" mat-raised-button color="primary">
+      Vedi tutto il catalogo
+    </button>
   </div>
 </section>

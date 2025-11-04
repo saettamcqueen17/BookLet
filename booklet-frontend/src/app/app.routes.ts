@@ -38,9 +38,9 @@ export const authGuard: CanActivateFn = async (route, state) => {
 }
 
   export const routes: Routes = [
-    {path: '', component: CatalogoGeneraleComponent},
+    {path: '', component: HomeComponent},
     {path: 'home', component: HomeComponent},
-    {path: 'catalogo', component: CatalogoGeneraleComponent},
+    {path: 'catalogo-generale', component: CatalogoGeneraleComponent},
     {path: 'redazione', component: CatalogoRedazioneComponent, canActivate: [authGuard], data: {role: 'REDAZIONE'}},
     {path: 'login', component: LoginComponent},
     {path: 'personale/:utenteId', component: CatalogoPersonaleComponent},
