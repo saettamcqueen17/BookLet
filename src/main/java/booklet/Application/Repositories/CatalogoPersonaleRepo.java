@@ -25,7 +25,7 @@ public interface CatalogoPersonaleRepo extends JpaRepository<CatalogoPersonale, 
         WHERE c.utente.id = :utenteId
         ORDER BY c.addedAt DESC
     """)
-    List<CatalogoPersonale> findByUtenteId(@Param("utenteId") UUID utenteId);
+    List<CatalogoPersonale> findByUtenteId(@Param("utenteId") String utenteId);
 
 
     @PreAuthorize("@ownership.check(#utenteId)")
@@ -34,7 +34,7 @@ public interface CatalogoPersonaleRepo extends JpaRepository<CatalogoPersonale, 
          JOIN FETCH c.libro l
         WHERE c.utente.id = :utenteId AND c.libro.isbn = :libroIsbn
     """)
-    Optional<CatalogoPersonale> findByUtenteIdAndLibroIsbn(@Param("utenteId") UUID utenteId,
+    Optional<CatalogoPersonale> findByUtenteIdAndLibroIsbn(@Param("utenteId") String utenteId,
                                                          @Param("libroIsbn") String libroIsbn);
 
 
@@ -52,7 +52,7 @@ public interface CatalogoPersonaleRepo extends JpaRepository<CatalogoPersonale, 
          WHERE c.utente.id = :utenteId
            AND c.libro.isbn = :libroIsbn
     """)
-    int aggiornaScaffale(@Param("utenteId") UUID utenteId,
+    int aggiornaScaffale(@Param("utenteId") String utenteId,
                          @Param("libroIsbn") String libroIsbn,
                          @Param("scaffale") Scaffale scaffale);
 
@@ -66,7 +66,7 @@ public interface CatalogoPersonaleRepo extends JpaRepository<CatalogoPersonale, 
          WHERE c.utente.id = :utenteId
            AND c.libro.isbn = :libroIsbn
     """)
-    int aggiornaValutazioneERecensione(@Param("utenteId") UUID utenteId,
+    int aggiornaValutazioneERecensione(@Param("utenteId") String utenteId,
                                        @Param("libroIsbn") String libroIsbn,
                                        @Param("rating") Integer rating,
                                        @Param("recensione") String recensione);
@@ -74,15 +74,15 @@ public interface CatalogoPersonaleRepo extends JpaRepository<CatalogoPersonale, 
 
 
     @PreAuthorize("@ownership.check(#utenteId)")
-    void deleteByUtenteIdAndLibroIsbn(@Param("utenteId") UUID utenteId,
+    void deleteByUtenteIdAndLibroIsbn(@Param("utenteId") String utenteId,
                                     @Param("libroIsbn") String libroIsbn);
 
     @PreAuthorize("@ownership.check(#utenteId)")
-    void deleteAllByUtenteId(@Param("utenteId") UUID utenteId);
+    void deleteAllByUtenteId(@Param("utenteId") String utenteId);
 
 
 
     @PreAuthorize("@ownership.check(#utenteId)")
-    boolean existsByUtenteIdAndLibroIsbn(@Param("utenteId") UUID utenteId,
+    boolean existsByUtenteIdAndLibroIsbn(@Param("utenteId") String utenteId,
                                          @Param("libroIsbn") String libroIsbn);
 }

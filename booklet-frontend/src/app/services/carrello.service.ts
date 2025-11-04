@@ -18,11 +18,11 @@ export interface CarrelloDTO {
 
 export interface AggiungiItemRequest {
   isbn: string;
-  quantity: number; // allineato al backend
+  quantita: number; // allineato al backend
 }
 
 export interface AggiornaQuantitaRequest {
-  quantity: number; // allineato al backend
+  quantita: number; // allineato al backend
 }
 
 @Injectable({ providedIn: 'root' })
@@ -36,12 +36,12 @@ export class CarrelloService {
   }
 
   aggiungiAlCarrello(isbn: string, quantita = 1): Observable<CarrelloDTO> {
-    const body: AggiungiItemRequest = { isbn, quantity: quantita };
+    const body: AggiungiItemRequest = { isbn, quantita: quantita };
     return this.http.post<CarrelloDTO>(`${this.apiUrl}/items`, body);
   }
 
   aggiornaQuantita(isbn: string, quantita: number): Observable<CarrelloDTO> {
-    const body: AggiornaQuantitaRequest = { quantity: quantita };
+    const body: AggiornaQuantitaRequest = { quantita: quantita };
     return this.http.patch<CarrelloDTO>(`${this.apiUrl}/items/${encodeURIComponent(isbn)}`, body);
   }
 

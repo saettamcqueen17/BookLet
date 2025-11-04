@@ -1,56 +1,40 @@
-// TypeScript
-// file: 'booklet-frontend/src/app/components/shared/navbar.component.ts'
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule, UrlTree } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
-
 import { MatButtonModule } from '@angular/material/button';
-import { AuthService } from '../../services/auth.service';
+import { KeycloakService } from 'keycloak-angular';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatToolbarModule, MatButtonModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatToolbarModule,
+    MatButtonModule,
+  ],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
-export class NavbarComponent {
-  constructor(private auth: AuthService, private router: Router) {}
+export class NavbarComponent implements OnInit {
+  isLoggedIn = false; // ✅ valore stabile, non promesse
 
-  isAuth(): boolean {
-    return this.auth.isAuthenticatedSig();
+  constructor(private keycloak: KeycloakService) {}
+
+  async ngOnInit() {
+    this.isLoggedIn = await this.keycloak.isLoggedIn();
   }
 
-  login(): void {
-    void this.auth.login('/');
+  async login(): Promise<void> {
+    await this.keycloak.login({ redirectUri: window.location.origin + '/home' });
   }
 
-  logout(): void {
-    void this.auth.logout();
+  async logout(): Promise<void> {
+    await this.keycloak.logout(window.location.origin + '/home');
   }
 
-  // Fix: usa 'id' invece di 'sub'
-  myCatalogoLink(): string[] | null {
-    const user = this.auth.getUser();
-    if (!user?.id) return null;
-    return ['/personale', user.id];
+  myCatalogoLink(): string | null {
+    return '/catalogo-personale';
   }
-
-  async navigateProtected(target: string | string[]): Promise<void> {
-    const urlTree: UrlTree = Array.isArray(target)
-      ? this.router.createUrlTree(target)
-      : this.router.parseUrl(target);
-    const serialized = this.router.serializeUrl(urlTree);
-    const redirect = serialized.startsWith('/') ? serialized : `/${serialized}`;
-
-    const logged = await this.auth.isLoggedIn();
-    if (!logged) {
-      await this.auth.login(redirect);
-      return;
-    }
-
-    await this.router.navigateByUrl(urlTree);
-  }
-
 }

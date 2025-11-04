@@ -16,7 +16,7 @@ public class CheckoutService {
 
     @PreAuthorize("@ownership.check(#utenteId)")
     @org.springframework.transaction.annotation.Transactional
-    public void checkout(UUID utenteId) {
+    public void checkout(String utenteId) {
         var cart = carrelli.getCarrello(utenteId);
         if (cart.getOggetti().isEmpty()) {
             throw new IllegalStateException("Carrello vuoto");

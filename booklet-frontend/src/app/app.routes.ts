@@ -43,7 +43,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
     {path: 'catalogo', component: CatalogoGeneraleComponent},
     {path: 'redazione', component: CatalogoRedazioneComponent, canActivate: [authGuard], data: {role: 'REDAZIONE'}},
     {path: 'login', component: LoginComponent},
-    {path: 'personale/:utenteId', component: CatalogoPersonaleComponent, canActivate: [authGuard]},
-    {path: 'carrello', component: CarrelloComponent, canActivate: [authGuard]},
+    {path: 'personale/:utenteId', component: CatalogoPersonaleComponent},
+    {path: 'carrello', component: CarrelloComponent },
     {path: '**', redirectTo: 'home'}];
 

@@ -8,9 +8,8 @@ import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/me/carrello")
@@ -22,76 +21,63 @@ public class CarrelloController {
         this.carrelloService = carrelloService;
     }
 
-
+    // ➤ Aggiungi libro al carrello
     @PostMapping("/items")
     public ResponseEntity<CarrelloDTO> addItem(
-            @AuthenticationPrincipal Object principal,
+            @AuthenticationPrincipal Jwt jwt,
             @Valid @RequestBody AddToCartRequest body
     ) {
-        UUID userId = resolveUserId(principal);
-        CarrelloDTO dto = carrelloService.aggiungiLibro(userId, body.isbn(), body.quantity());
+        String userId = jwt.getClaimAsString("sub");
+        CarrelloDTO dto = carrelloService.aggiungiLibro(userId, body.isbn(), body.quantita());
         return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 
-
+    // ➤ Aggiorna quantità di un libro
     @PatchMapping("/items/{isbn}")
     public ResponseEntity<CarrelloDTO> updateQty(
-            @AuthenticationPrincipal Object principal,
+            @AuthenticationPrincipal Jwt jwt,
             @PathVariable("isbn") String isbn,
-            @Valid @RequestBody UpdateQuantityRequest body
+            @Valid @RequestBody CarrelloController.UpdateQuantitaRequest body
     ) {
-        UUID userId = resolveUserId(principal);
-        CarrelloDTO dto = carrelloService.aggiornaQuantita(userId, isbn, body.quantity());
+        String userId = jwt.getClaimAsString("sub");
+        CarrelloDTO dto = carrelloService.aggiornaQuantita(userId, isbn, body.quantita());
         return ResponseEntity.ok(dto);
     }
 
-
+    // ➤ Rimuovi un libro dal carrello
     @DeleteMapping("/items/{isbn}")
     public ResponseEntity<CarrelloDTO> removeItem(
-            @AuthenticationPrincipal Object principal,
+            @AuthenticationPrincipal Jwt jwt,
             @PathVariable("isbn") String isbn
     ) {
-        UUID userId = resolveUserId(principal);
+        String userId = jwt.getClaimAsString("sub");
         CarrelloDTO dto = carrelloService.rimuoviLibro(userId, isbn);
         return ResponseEntity.ok(dto);
     }
 
-
+    // ➤ Ottieni il carrello dell’utente
     @GetMapping
-    public ResponseEntity<CarrelloDTO> getCart(@AuthenticationPrincipal Object principal) {
-        UUID userId = resolveUserId(principal);
+    public ResponseEntity<CarrelloDTO> getCart(@AuthenticationPrincipal Jwt jwt) {
+        String userId = jwt.getClaimAsString("sub");
         CarrelloDTO dto = carrelloService.getCarrello(userId);
         return ResponseEntity.ok(dto);
     }
 
-
+    // ➤ Svuota completamente il carrello
     @DeleteMapping
-    public ResponseEntity<CarrelloDTO> clear(@AuthenticationPrincipal Object principal) {
-        UUID userId = resolveUserId(principal);
+    public ResponseEntity<CarrelloDTO> clear(@AuthenticationPrincipal Jwt jwt) {
+        String userId = jwt.getClaimAsString("sub");
         CarrelloDTO dto = carrelloService.svuota(userId);
         return ResponseEntity.ok(dto);
     }
 
-
-    private UUID resolveUserId(Object principal) {
-
-        try {
-            String name = org.springframework.security.core.context.SecurityContextHolder
-                    .getContext().getAuthentication().getName();
-            return UUID.fromString(name);
-        } catch (Exception ignore) { /* fall through */ }
-
-        throw new IllegalStateException("Impossibile risolvere lo userId dall'utente autenticato");
-    }
-
-
-
+    // ✅ DTO per le richieste
     public record AddToCartRequest(
             @NotBlank(message = "isbn obbligatorio") String isbn,
-            @Min(value = 1, message = "quantity deve essere >= 1") int quantity
+            @Min(value = 1, message = "quantity deve essere >= 1") int quantita
     ) {}
 
-    public record UpdateQuantityRequest(
-            @Min(value = 0, message = "quantity deve essere >= 0") int quantity
+    public record UpdateQuantitaRequest(
+            @Min(value = 0, message = "quantity deve essere >= 0") int quantita
     ) {}
 }

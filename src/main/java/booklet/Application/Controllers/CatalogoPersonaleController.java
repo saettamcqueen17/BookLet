@@ -15,7 +15,7 @@ import java.util.UUID;
         private final CatalogoPersonaleService service;
 
         @GetMapping("/{utenteId}")
-        public CatalogoPersonaleContainerDTO get(@PathVariable UUID utenteId) {
+        public CatalogoPersonaleContainerDTO get(@PathVariable String utenteId) {
             return service.getCatalogo(utenteId);
         }
     }

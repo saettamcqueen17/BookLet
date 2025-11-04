@@ -17,7 +17,7 @@ public class Utente {
 
     @Id
     @GeneratedValue
-    private UUID id;
+    private String id;
     @Column(unique = true, nullable = false)
     private String username;
     @Column(unique = true, nullable = false)
@@ -38,11 +38,11 @@ public class Utente {
         this.username = username;
     }
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 

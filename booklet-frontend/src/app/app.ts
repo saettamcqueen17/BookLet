@@ -11,7 +11,7 @@ import {NavbarComponent} from './components/shared/navbar.component';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <mat-toolbar class="navbar" role="navigation">
-      <span style="font-weight:700">BookLet</span>
+      <span style="font-weight:700">Booklet</span>
       <span class="spacer"></span>
       <app-navbar></app-navbar>
     </mat-toolbar>
@@ -19,7 +19,7 @@ import {NavbarComponent} from './components/shared/navbar.component';
     <router-outlet></router-outlet>
 
     <footer class="footer">
-      © 2025 BookLet – Tutti i diritti riservati
+      © 2025 Booklet – Tutti i diritti riservati
     </footer>
   `,
   styles: [`

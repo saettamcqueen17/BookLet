@@ -7,6 +7,7 @@ import booklet.Application.Mappers.LibroMapper; // puoi riutilizzarlo se mappa i
 import booklet.Application.Repositories.CatalogoGeneraleRepo;
 
 import booklet.Application.Repositories.LibroRepo;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
-
+@Primary
 @Service
 public class CatalogoGeneraleService implements CarrelloService.CatalogQueryPort {
 
@@ -32,25 +33,23 @@ public class CatalogoGeneraleService implements CarrelloService.CatalogQueryPort
     @Override
     public Optional<CarrelloService.BookSnapshot> findByIsbn(String rawIsbn) {
         final String isbn = normalizzaIsbn(rawIsbn);
-        return repo.findByIsbn(isbn)
-                .map(c -> new CarrelloService.BookSnapshot(
-                        c.getIsbn(),
-                        c.getTitolo(),
-                        c.getPrezzo(),
-                        c.getDisponibilita()
-                ));
+        System.out.println("🔎 [CATALOGO] Ricevuto rawIsbn='" + rawIsbn + "' → normalizzato='" + isbn + "'");
+        Optional<CatalogoGenerale> result = repo.findByIsbn(isbn);
+        System.out.println("📗 [CATALOGO] Repo.findByIsbn ha trovato qualcosa? " + result.isPresent());
+        return result.map(c -> new CarrelloService.BookSnapshot(
+                c.getIsbn(),
+                c.getTitolo(),
+                c.getPrezzo(),
+                c.getDisponibilita()
+        ));
     }
 
     public Page<LibroDTO> findAll(Pageable pageable) {
         return repo.findAll(pageable).map(LibroMapper::toDto);
     }
 
-    public Optional<LibroDTO> dettaglioPerIsbn(String rawIsbn) {
-        String isbn = normalizzaIsbn(rawIsbn);
-        return repo.findByIsbn(isbn).map(LibroMapper::toDto);
-    }
 
-    /* ======== Aggiunta libri: SOLO ADMIN ======== */
+
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public LibroDTO aggiungiLibro(LibroDTO dto) {
@@ -100,7 +99,6 @@ public class CatalogoGeneraleService implements CarrelloService.CatalogQueryPort
                 .collect(Collectors.toList());
     }
 
-    /* ======== Rimozione libri ======== */
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public void rimuoviLibroPerIsbn(String rawIsbn) {

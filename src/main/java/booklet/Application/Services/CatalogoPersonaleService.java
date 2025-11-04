@@ -17,11 +17,11 @@ import java.util.UUID;
 public class CatalogoPersonaleService {
 
     private final CatalogoPersonaleRepo repo;
-    private final UtenteRepository utenti; // se vuoi recuperare username (opzionale)
+    private final UtenteRepository utenti;
 
     @PreAuthorize("@ownership.check(#utenteId)")
     @Transactional(readOnly = true)
-    public CatalogoPersonaleContainerDTO getCatalogo(UUID utenteId) {
+    public CatalogoPersonaleContainerDTO getCatalogo(String utenteId) {
         var righe = repo.findByUtenteId(utenteId);
         var maybeUser = utenti.findById(utenteId); // opzionale
         String username =  maybeUser.map(Utente::getUsername).orElse(null);

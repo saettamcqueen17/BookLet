@@ -13,8 +13,8 @@ export class AuthService {
   private initPromise?: Promise<boolean>;
 
   private readonly url = 'http://localhost:8085';
-  private readonly realm = 'BookLet';
-  private readonly clientId = 'booklet-frontend';
+  private readonly realm = 'Booklet';
+  private readonly clientId = 'booklet_client_frontend';
 
   private readonly TOK_KEY = 'kc_token';
   private readonly RTOK_KEY = 'kc_refreshToken';

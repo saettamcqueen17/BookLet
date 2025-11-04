@@ -25,16 +25,16 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class CarrelloService {
 
-    private final Map<UUID, Carrello> carrelliPerUtente = new ConcurrentHashMap<>();
-    private final CatalogQueryPort catalog; // porta server-side per leggere i dati autorevoli del libro
+    private final Map<String, Carrello> carrelliPerUtente = new ConcurrentHashMap<>();
+    private final CatalogoGeneraleService catalog; // porta server-side per leggere i dati autorevoli del libro
 
-    public CarrelloService(CatalogQueryPort catalog) {
+    public CarrelloService(CatalogoGeneraleService catalog) {
         this.catalog = catalog;
     }
 
 
     @PreAuthorize("@ownership.check(#utenteId)") // opzionale: rimuovi se non stai ancora usando Security
-    public CarrelloDTO aggiungiLibro(UUID utenteId, String rawIsbn, int quantita) {
+    public CarrelloDTO aggiungiLibro(String utenteId, String rawIsbn, int quantita) {
         Objects.requireNonNull(utenteId, "L'id utente non può essere nullo");
         Objects.requireNonNull(rawIsbn, "L'ISBN non può essere nullo");
         if (quantita <= 0) throw new IllegalArgumentException("La quantità deve essere maggiore di zero");
@@ -72,7 +72,7 @@ public class CarrelloService {
 
 
     @PreAuthorize("@ownership.check(#utenteId)")
-    public CarrelloDTO aggiornaQuantita(UUID utenteId, String rawIsbn, int nuovaQuantita) {
+    public CarrelloDTO aggiornaQuantita(String utenteId, String rawIsbn, int nuovaQuantita) {
         Objects.requireNonNull(utenteId, "L'id utente non può essere nullo");
         Objects.requireNonNull(rawIsbn, "L'ISBN non può essere nullo");
 
@@ -85,7 +85,6 @@ public class CarrelloService {
                 return CarrelloMapper.toDto(carrello);
             }
 
-            // Verifica su dati server-side
             BookSnapshot book = catalog.findByIsbn(isbn)
                     .orElseThrow(() -> new IllegalArgumentException("Libro non presente nel catalogo generale"));
             if (book.stock() != null && nuovaQuantita > book.stock()) {
@@ -105,7 +104,7 @@ public class CarrelloService {
 
 
     @PreAuthorize("@ownership.check(#utenteId)")
-    public CarrelloDTO rimuoviLibro(UUID utenteId, String rawIsbn) {
+    public CarrelloDTO rimuoviLibro(String utenteId, String rawIsbn) {
         Objects.requireNonNull(utenteId, "L'id utente non può essere nullo");
         Objects.requireNonNull(rawIsbn, "L'ISBN non può essere nullo");
 
@@ -119,7 +118,7 @@ public class CarrelloService {
 
 
     @PreAuthorize("@ownership.check(#utenteId)")
-    public CarrelloDTO svuota(UUID utenteId) {
+    public CarrelloDTO svuota(String utenteId) {
         Objects.requireNonNull(utenteId, "L'id utente non può essere nullo");
         Carrello carrello = carrelliPerUtente.computeIfAbsent(utenteId, __ -> new Carrello());
         synchronized (carrello) {
@@ -131,7 +130,7 @@ public class CarrelloService {
 
 
 
- @PreAuthorize("@ownership.check(#utenteId)") public CarrelloDTO getCarrello(UUID utenteId) {
+ @PreAuthorize("@ownership.check(#utenteId)") public CarrelloDTO getCarrello(String utenteId) {
         Objects.requireNonNull(utenteId, "L'id utente non può essere nullo");
         Carrello carrello = carrelliPerUtente.computeIfAbsent(utenteId, __ -> new Carrello());
         synchronized (carrello) {

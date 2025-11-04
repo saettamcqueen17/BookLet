@@ -41,11 +41,11 @@ export class CarrelloComponent {
   }
 
   aggiornaQuantita(isbn: string, value: number): void {
-    const quantity = Number.isFinite(value) ? Math.max(0, Math.trunc(value)) : 0;
+    const quantita = Number.isFinite(value) ? Math.max(0, Math.trunc(value)) : 0;
     this.loading.set(true);
     this.error.set(null);
     this.carrelloService
-      .aggiornaQuantita(isbn, quantity)
+      .aggiornaQuantita(isbn, quantita)
       .pipe(takeUntilDestroyed())
       .subscribe({
         next: (cart) => {

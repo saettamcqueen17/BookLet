@@ -11,8 +11,8 @@ export interface CatalogoPersonaleDTO {
 }
 
 export interface CatalogoPersonaleContainerDTO {
-  utenteId: string;         // UUID
-  username?: string | null; // opzionale
+  utenteId: string;
+  username?: string | null;
   totaleLibri: number;
   libri: CatalogoPersonaleDTO[];
 }

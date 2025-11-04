@@ -5,7 +5,7 @@ import java.time.Instant;
 
 @Entity
 @Table(
-        name = "CatalogoPersonale",
+        name = "catalogo_personale",
         uniqueConstraints = @UniqueConstraint(columnNames = {"utente_id","libro_isbn"}),
         indexes = {
                 @Index(name = "ix_utente_libri_utente", columnList = "utente_id"),

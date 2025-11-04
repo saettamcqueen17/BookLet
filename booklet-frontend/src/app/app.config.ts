@@ -1,29 +1,51 @@
-import { APP_INITIALIZER, ApplicationConfig } from '@angular/core';
+import { ApplicationConfig, APP_INITIALIZER, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
-import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { KeycloakService } from 'keycloak-angular';
 import { routes } from './app.routes';
-import { authInterceptor } from './interceptors/auth.interceptor';
-import { API_BASE_URL } from './services/catalogoGenerale.service';
-import { environment } from '../environments/environment';
-import { AuthService } from './services/auth.service';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { KeycloakBearerInterceptor } from 'keycloak-angular';
 
-function initAuth(auth: AuthService): () => Promise<void> {
-  return () => auth.initSession();
+
+
+function initializeKeycloak() {
+  const keycloak = inject(KeycloakService);
+  const platformId = inject(PLATFORM_ID);
+
+  return async () => {
+    if (isPlatformBrowser(platformId)) {
+      await keycloak.init({
+        config: {
+          url: 'http://localhost:8085',
+          realm: 'Booklet',
+          clientId: 'booklet_client_frontend',
+        },
+        initOptions: {
+          onLoad: 'login-required',
+          checkLoginIframe: false,
+        },
+      });
+    } else {
+      console.log('Keycloak init skipped (server-side rendering)');
+    }
+  };
 }
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: KeycloakBearerInterceptor, multi: true },
+
     provideRouter(routes),
-    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
-    provideAnimations(),
-    { provide: API_BASE_URL, useValue: environment.apiBase },
-    { provide: API_BASE_URL, useValue: environment.apiBase },
+    provideHttpClient(withInterceptorsFromDi()),
+
+    KeycloakService,
+
     {
       provide: APP_INITIALIZER,
-      useFactory: initAuth,
+      useFactory: initializeKeycloak,
       multi: true,
-      deps: [AuthService]
-    }
-  ]
+      deps: [KeycloakService], // 🔥 obbligatoria
+    },
+  ],
 };

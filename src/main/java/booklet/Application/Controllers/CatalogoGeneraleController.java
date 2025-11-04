@@ -7,7 +7,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/catalogo")
-@CrossOrigin(origins = "*")
 public class CatalogoGeneraleController {
 
     private final CatalogoGeneraleService service;

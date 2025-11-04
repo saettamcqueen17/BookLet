@@ -5,7 +5,6 @@ import booklet.Application.DTO.CatalogoPersonaleDTO;
 import booklet.Application.Entities.CatalogoPersonale;
 
 import java.util.List;
-import java.util.UUID;
 
 public class CatalogoPersonaleMapper {
 
@@ -23,7 +22,7 @@ public class CatalogoPersonaleMapper {
     }
 
     public static CatalogoPersonaleContainerDTO toContainer(
-            UUID utenteId,
+            String utenteId,
             String username, // opzionale
             List<CatalogoPersonale> righe) {
 

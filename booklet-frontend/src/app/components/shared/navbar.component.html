@@ -1,12 +1,39 @@
 <mat-toolbar color="primary" class="navbar">
-  <span class="brand">📚 BookLet</span>
+  <span class="brand">📚 <strong>BookLet</strong></span>
+
   <span class="spacer"></span>
-  <a mat-button routerLink="/home">Home</a>
-  <a mat-button routerLink="/catalogo">Catalogo Generale</a>
-  <button mat-button type="button" (click)="navigateProtected(['/carrello'])">Carrello</button>
-  <button mat-button type="button" (click)="navigateProtected(['/redazione'])">Redazione</button>
-  <a mat-button *ngIf="isAuth() && myCatalogoLink() as link" [routerLink]="link">Il mio catalogo</a>
+
+  <button mat-button routerLink="/home">Home</button>
+  <button mat-button routerLink="/catalogo-generale">Catalogo Generale</button>
+
+  <button mat-button routerLink="/carrello">Carrello</button>
+  <button mat-button routerLink="/redazione">Redazione</button>
+
+  <button
+    mat-button
+    *ngIf="isLoggedIn && myCatalogoLink() as link"
+    [routerLink]="link"
+  >
+    Il mio catalogo
+  </button>
+
   <span class="spacer"></span>
-  <button mat-button *ngIf="!isAuth()" (click)="login()">Login</button>
-  <button mat-button *ngIf="isAuth()" (click)="logout()">Logout</button>
+
+  <button
+    mat-raised-button
+    color="accent"
+    *ngIf="!isLoggedIn"
+    (click)="login()"
+  >
+    Login
+  </button>
+
+  <button
+    mat-raised-button
+    color="warn"
+    *ngIf="isLoggedIn"
+    (click)="logout()"
+  >
+    Logout
+  </button>
 </mat-toolbar>
