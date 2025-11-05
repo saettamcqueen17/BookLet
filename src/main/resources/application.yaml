@@ -21,6 +21,11 @@ spring:
           jpa:
             hibernate:
               ddl-auto: update
+              logging:
+                level:
+                  org.springframework.transaction: TRACE
+                  org.hibernate.SQL: DEBUG
+                  org.hibernate.type.descriptor.sql.BasicBinder: TRACE
   port: 8080
   server:
     security:
@@ -29,3 +34,4 @@ spring:
           jwt:
 
             issuer-uri: http://localhost:8085/realms/Booklet
+

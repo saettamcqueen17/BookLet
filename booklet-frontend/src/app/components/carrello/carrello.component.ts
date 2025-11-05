@@ -1,6 +1,5 @@
 
 
-
 import { Component, signal } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -11,11 +10,20 @@ import { MatInputModule } from '@angular/material/input';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CarrelloService } from '../../services/carrello.service';
 import { CarrelloDTO, OggettoCarrelloDTO } from '../../models/carrello';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-carrello',
   standalone: true,
-  imports: [CommonModule, FormsModule, CurrencyPipe, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    CurrencyPipe,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule
+  ],
   templateUrl: './carrello.component.html',
   styleUrls: ['./carrello.component.css']
 })
@@ -24,7 +32,10 @@ export class CarrelloComponent {
   loading = signal<boolean>(true);
   error = signal<string | null>(null);
 
-  constructor(private readonly carrelloService: CarrelloService) {
+  constructor(
+    private readonly carrelloService: CarrelloService,
+    private snackBar: MatSnackBar
+  ) {
     this.caricaCarrello();
   }
 
@@ -40,10 +51,12 @@ export class CarrelloComponent {
     return this.carrello()?.numeroTotaleOggetti ?? 0;
   }
 
+  /** --- METODI DI SERVIZIO --- */
   aggiornaQuantita(isbn: string, value: number): void {
     const quantita = Number.isFinite(value) ? Math.max(0, Math.trunc(value)) : 0;
     this.loading.set(true);
     this.error.set(null);
+
     this.carrelloService
       .aggiornaQuantita(isbn, quantita)
       .pipe(takeUntilDestroyed())
@@ -59,6 +72,7 @@ export class CarrelloComponent {
   rimuovi(isbn: string): void {
     this.loading.set(true);
     this.error.set(null);
+
     this.carrelloService
       .rimuoviDalCarrello(isbn)
       .pipe(takeUntilDestroyed())
@@ -72,11 +86,11 @@ export class CarrelloComponent {
   }
 
   svuota(): void {
-    if (this.oggetti.length === 0) {
-      return;
-    }
+    if (this.oggetti.length === 0) return;
+
     this.loading.set(true);
     this.error.set(null);
+
     this.carrelloService
       .svuotaCarrello()
       .pipe(takeUntilDestroyed())
@@ -92,6 +106,7 @@ export class CarrelloComponent {
   private caricaCarrello(): void {
     this.loading.set(true);
     this.error.set(null);
+
     this.carrelloService
       .getCarrello()
       .pipe(takeUntilDestroyed())
@@ -104,6 +119,39 @@ export class CarrelloComponent {
       });
   }
 
+  /** --- CHECKOUT --- */
+  checkout(): void {
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.carrelloService.checkout().subscribe({
+      next: () => {
+        // ✅ Svuota il carrello tramite signal
+        const current = this.carrello();
+        if (current) {
+          this.carrello.set({
+            ...current,
+            oggetti: [],
+            numeroTotaleOggetti: 0,
+            totale: 0
+          });
+        }
+
+        this.loading.set(false);
+        this.snackBar.open('Checkout completato con successo!', 'Chiudi', {
+          duration: 3000
+        });
+      },
+      error: (err) => {
+        this.handleError(err);
+        this.snackBar.open('Errore durante il checkout', 'Chiudi', {
+          duration: 4000
+        });
+      }
+    });
+  }
+
+  /** --- ERROR HANDLER --- */
   private handleError(err: unknown): void {
     console.error('Errore durante l\'operazione sul carrello', err);
     this.error.set('Si è verificato un problema nel comunicare con il carrello.');

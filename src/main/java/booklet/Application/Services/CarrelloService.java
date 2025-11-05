@@ -6,12 +6,10 @@ import booklet.Application.Entities.OggettoCarrello;
 import booklet.Application.Mappers.CarrelloMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -23,14 +21,16 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 @Service
+@Transactional
 public class CarrelloService {
 
     private final Map<String, Carrello> carrelliPerUtente = new ConcurrentHashMap<>();
-    private final CatalogoGeneraleService catalog; // porta server-side per leggere i dati autorevoli del libro
+    private  CatalogoGeneraleService catalog; // porta server-side per leggere i dati autorevoli del libro
 
     public CarrelloService(CatalogoGeneraleService catalog) {
         this.catalog = catalog;
     }
+
 
 
     @PreAuthorize("@ownership.check(#utenteId)") // opzionale: rimuovi se non stai ancora usando Security
@@ -62,7 +62,7 @@ public class CarrelloService {
             }
 
             if (qtyAttuale == 0) {
-                carrello.aggiungiOggetto(new OggettoCarrello(isbn,  book.prezzo(), quantita));
+                carrello.aggiungiOggetto(new OggettoCarrello(isbn,book.titolo , book.prezzo(), quantita));
             } else {
                 carrello.aggiornaQuantita(isbn, (int) richiestaTotale);
             }
@@ -70,6 +70,23 @@ public class CarrelloService {
         }
     }
 
+    @Transactional
+    public void checkout(String userId) {
+        Carrello carrello = carrelliPerUtente.get(userId);
+        if (carrello == null || carrello.getLibriNelCarrello().isEmpty()) {
+            throw new IllegalStateException("Il carrello è vuoto o non esiste per l'utente " + userId);
+        }
+
+        ConcurrentHashMap<String, Integer> libriEQuantita = new ConcurrentHashMap<>();
+        for (OggettoCarrello oggetto : carrello.getLibriNelCarrello()) {
+            libriEQuantita.put(oggetto.getIsbn(), oggetto.getQuantita());
+        }
+
+        catalog.aggiornaDisponibilitaPerCheckout(libriEQuantita);
+
+        // Svuota il carrello in memoria
+        carrello.getLibriNelCarrello().clear();
+    }
 
     @PreAuthorize("@ownership.check(#utenteId)")
     public CarrelloDTO aggiornaQuantita(String utenteId, String rawIsbn, int nuovaQuantita) {
@@ -94,7 +111,7 @@ public class CarrelloService {
 
             if (carrello.getOggetto(isbn).isEmpty()) {
 
-                carrello.aggiungiOggetto(new OggettoCarrello(isbn,  book.prezzo(), nuovaQuantita));
+                carrello.aggiungiOggetto(new OggettoCarrello(isbn, book.titolo(), book.prezzo(), nuovaQuantita));
             } else {
                 carrello.aggiornaQuantita(isbn, nuovaQuantita);
             }

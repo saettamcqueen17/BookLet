@@ -63,6 +63,12 @@ public class CarrelloController {
         return ResponseEntity.ok(dto);
     }
 
+    @PostMapping("/checkout")
+    public ResponseEntity<String> checkout(@AuthenticationPrincipal Jwt jwt) {
+        String userId = jwt.getClaimAsString("sub");
+        carrelloService.checkout(userId);
+        return ResponseEntity.ok("Checkout completato con successo!");
+    }
     // ➤ Svuota completamente il carrello
     @DeleteMapping
     public ResponseEntity<CarrelloDTO> clear(@AuthenticationPrincipal Jwt jwt) {
@@ -71,7 +77,6 @@ public class CarrelloController {
         return ResponseEntity.ok(dto);
     }
 
-    // ✅ DTO per le richieste
     public record AddToCartRequest(
             @NotBlank(message = "isbn obbligatorio") String isbn,
             @Min(value = 1, message = "quantity deve essere >= 1") int quantita

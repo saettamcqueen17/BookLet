@@ -13,7 +13,7 @@ public class LibroMapper {
         dto.setIsbn(entity.getIsbn());
         dto.setTitolo(entity.getTitolo());
         dto.setAutore(entity.getAutore());
-        dto.setCasaEditrice(entity.getCasaEditrice());
+        dto.setCasaEditrice(entity.getCasa_editrice());
         dto.setGenere(entity.getGenere());
         dto.setPrezzo(entity.getPrezzo());
         dto.setDisponibilita(entity.getDisponibilita());
@@ -26,7 +26,7 @@ public class LibroMapper {
         c.setIsbn(dto.getIsbn());
         c.setTitolo(dto.getTitolo());
         c.setAutore(dto.getAutore());
-        c.setCasaEditrice(dto.getCasaEditrice());
+        c.setCasa_editrice(dto.getCasaEditrice());
         c.setGenere(dto.getGenere());
         c.setPrezzo(dto.getPrezzo());
         c.setDisponibilita(dto.getDisponibilita());

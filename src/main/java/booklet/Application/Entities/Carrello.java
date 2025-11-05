@@ -9,12 +9,13 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 
 public class Carrello {
 
-    private final Map<String, OggettoCarrello> libriNelCarrello = new LinkedHashMap<>();
+    private final ConcurrentHashMap<String, OggettoCarrello> libriNelCarrello = new ConcurrentHashMap<>();
 
 
     public void aggiungiOggetto(OggettoCarrello oggetto) {
@@ -78,8 +79,7 @@ public class Carrello {
     public List<OggettoCarrello> getLibriNelCarrello() {
         return libriNelCarrello.values().stream()
                 .map(OggettoCarrello::copia)
-                .collect(Collectors.toUnmodifiableList());
-    }
+                .collect(Collectors.toList());    }
 
 
     public Optional<OggettoCarrello> getOggetto(String oggettoId) {

@@ -2,9 +2,25 @@
   <header class="carrello__intestazione">
     <h1>Il tuo carrello</h1>
     <div class="carrello__azioni">
-      <button mat-stroked-button color="warn" (click)="svuota()" [disabled]="oggetti.length === 0 || loading()">
+      <button
+        mat-stroked-button
+        color="warn"
+        (click)="svuota()"
+        [disabled]="oggetti.length === 0 || loading()"
+      >
         <mat-icon>delete_sweep</mat-icon>
         Svuota carrello
+      </button>
+
+      <!-- ✅ Nuovo bottone checkout -->
+      <button
+        mat-flat-button
+        color="primary"
+        (click)="checkout()"
+        [disabled]="oggetti.length === 0 || loading()"
+      >
+        <mat-icon>shopping_cart_checkout</mat-icon>
+        Procedi al Checkout
       </button>
     </div>
   </header>
@@ -36,20 +52,24 @@
       <tbody>
       <tr *ngFor="let oggetto of oggetti">
         <td>{{ oggetto.isbn }}</td>
-
-        <td class="numero">{{ oggetto.prezzoUnitario | currency:'EUR':'symbol' }}</td>
+        <td class="titolo">{{ oggetto.titolo }}</td>
+        <td class="numero">
+          {{ oggetto.prezzoUnitario | currency: 'EUR' : 'symbol' }}
+        </td>
         <td class="numero">
           <mat-form-field appearance="outline" class="qty-field">
             <input
               matInput
               type="number"
-              min="0"
+              min="1"
               [ngModel]="oggetto.quantita"
               (ngModelChange)="aggiornaQuantita(oggetto.isbn, $event)"
             />
           </mat-form-field>
         </td>
-        <td class="numero">{{ oggetto.prezzoUnitario * oggetto.quantita | currency:'EUR':'symbol' }}</td>
+        <td class="numero">
+          {{ oggetto.prezzoUnitario * oggetto.quantita | currency: 'EUR' : 'symbol' }}
+        </td>
         <td class="azioni">
           <button mat-icon-button color="warn" (click)="rimuovi(oggetto.isbn)">
             <mat-icon>delete</mat-icon>
@@ -66,7 +86,7 @@
       </div>
       <div class="totale">
         <span>Totale ordine:</span>
-        <strong>{{ totale | currency:'EUR':'symbol' }}</strong>
+        <strong>{{ totale | currency: 'EUR' : 'symbol' }}</strong>
       </div>
     </div>
   </section>

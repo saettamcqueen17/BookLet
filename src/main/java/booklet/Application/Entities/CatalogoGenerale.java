@@ -31,22 +31,22 @@ public class CatalogoGenerale {
     @Column(length = 80)
     private Genere genere;
 
-    @Column(name = "anno_pub")
-    private Integer annoPubblicazione;
+    @Column(name = "anno_pubblicazione")
+    private Integer anno_pubblicazione ;
 
-    @Column(name = "casaEditrice")
-    private String casaEditrice ;
+    @Column(name = "casa_editrice")
+    private String casa_editrice;
 
     @Column(precision = 12, scale = 2, nullable = false)
     private BigDecimal prezzo = BigDecimal.ZERO;
 
-    @Column(name = "immagineCopertina")
+    @Column(name = "immagine_copertina")
     private String immagineLibro;
 
 
 
     /** null = nessun limite hard di stock */
-    @Column(name = "disponibilità")
+    @Column(name = "disponibilita")
     private Integer disponibilita;
 
     @Column(nullable = false)
@@ -60,12 +60,12 @@ public class CatalogoGenerale {
 
     public String getIsbn() { return isbn; }
 
- public String getCasaEditrice() {
-  return casaEditrice;
+ public String getCasa_editrice() {
+  return casa_editrice;
  }
 
- public void setCasaEditrice(String casaEditrice) {
-  this.casaEditrice = casaEditrice;
+ public void setCasa_editrice(String casa_editrice) {
+  this.casa_editrice = casa_editrice;
  }
 
  public void setIsbn(String isbn) { this.isbn = isbn; }
@@ -85,8 +85,8 @@ public class CatalogoGenerale {
   this.immagineLibro = immagineLibro;
  }
 
- public Integer getAnnoPubblicazione() { return annoPubblicazione; }
-    public void setAnnoPubblicazione(Integer annoPubblicazione) { this.annoPubblicazione = annoPubblicazione; }
+ public Integer getAnnoPubblicazione() { return anno_pubblicazione; }
+    public void setAnnoPubblicazione(Integer annoPubblicazione) { this.anno_pubblicazione = annoPubblicazione; }
     public BigDecimal getPrezzo() { return prezzo; }
     public void setPrezzo(BigDecimal prezzo) { this.prezzo = prezzo; }
     public Integer getDisponibilita() { return disponibilita; }
@@ -99,7 +99,7 @@ public class CatalogoGenerale {
   libro.setIsbn(cg.getIsbn());
   libro.setTitolo(cg.getTitolo());
   libro.setAutore(cg.getAutore());
-  libro.setCasaEditrice(cg.getCasaEditrice());
+  libro.setCasaEditrice(cg.getCasa_editrice());
   libro.setPrezzo(cg.getPrezzo());
   libro.setGenere(cg.getGenere());
   libro.setImmagineLibro(cg.getImmagineLibro());

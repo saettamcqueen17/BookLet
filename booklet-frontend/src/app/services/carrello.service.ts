@@ -45,6 +45,10 @@ export class CarrelloService {
     return this.http.patch<CarrelloDTO>(`${this.apiUrl}/items/${encodeURIComponent(isbn)}`, body);
   }
 
+  checkout() {
+    return this.http.post(`${this.apiUrl}/checkout`, {}, { responseType: 'text' });
+  }
+
   svuotaCarrello(): Observable<CarrelloDTO> {
     return this.http.delete<CarrelloDTO>(this.apiUrl);
   }

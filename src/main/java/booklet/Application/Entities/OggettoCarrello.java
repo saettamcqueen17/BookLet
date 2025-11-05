@@ -11,11 +11,13 @@ import java.util.Objects;
 public class OggettoCarrello {
 
     private final String isbn;
+    private final String titolo ;
     private final BigDecimal prezzoUnitario;
     private int quantita;
 
 
-    public OggettoCarrello(String isbn ,  BigDecimal prezzoUnitario, int quantita) {
+    public OggettoCarrello(String isbn, String titolo, BigDecimal prezzoUnitario, int quantita) {
+
         if (isbn == null || isbn.isBlank()) {
             throw new IllegalArgumentException("L'isbn del prodotto non può essere nullo o vuoto");
         }
@@ -29,6 +31,7 @@ public class OggettoCarrello {
         this.isbn = isbn;
         this.prezzoUnitario = prezzoUnitario;
         this.quantita = quantita;
+        this.titolo = titolo ;
     }
 
     public String getIsbn() {
@@ -67,7 +70,7 @@ public class OggettoCarrello {
 
 
     public OggettoCarrello copia() {
-        return new OggettoCarrello(isbn,  prezzoUnitario, quantita);
+        return new OggettoCarrello(isbn,titolo , prezzoUnitario, quantita);
     }
 
     @Override
@@ -94,6 +97,11 @@ public class OggettoCarrello {
                 ", prezzoUnitario=" + prezzoUnitario +
                 ", quantita=" + quantita +
                 '}';
+    }
+
+
+    public String getTitolo() {
+        return titolo ;
     }
 }
 
