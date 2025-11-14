@@ -4,8 +4,8 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { map, distinctUntilChanged, filter, switchMap } from 'rxjs/operators';
 import { CatalogoPersonaleService } from '../../services/catalogoPersonale.service';
-import { CatalogoPersonaleContainerDTO } from '../../models/catalogo-personale';
-import { PersonalBookCardComponent } from './personal-card.component';
+import {CatalogoPersonaleContainerDTO, CatalogoPersonaleDTO} from '../../models/catalogo-personale';
+import {PersonalBookCardComponent} from './personal-card.component';
 
 @Component({
   selector: 'app-catalogo-personale',

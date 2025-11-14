@@ -1,6 +1,8 @@
 package booklet.Application.Services;
 
 import booklet.Application.DTO.CatalogoPersonaleContainerDTO;
+import booklet.Application.DTO.CatalogoPersonaleDTO;
+import booklet.Application.Entities.CatalogoPersonale;
 import booklet.Application.Entities.Utente;
 import booklet.Application.Mappers.CatalogoPersonaleMapper;
 import booklet.Application.Repositories.CatalogoPersonaleRepo;
@@ -30,4 +32,35 @@ public class CatalogoPersonaleService {
                 righe
         );
     }
+
+
+    @Transactional
+    public CatalogoPersonaleDTO aggiornaScaffale(Object principal, String isbn,
+                                                 CatalogoPersonale.Scaffale scaffale) {
+
+        Utente utente = utenteService.ensureUserExistsFromJwt((Jwt) principal);
+        repo.aggiornaScaffale(utente.getUtenteId(), isbn, scaffale);
+
+        // ritorno riga aggiornata
+        var updated = repo.findByUtenteIdAndLibroIsbn(utente.getUtenteId(), isbn)
+                .orElseThrow();
+        return CatalogoPersonaleMapper.toDto(updated);
+    }
+
+    @Transactional
+    public CatalogoPersonaleDTO aggiornaRecensione(Object principal, String isbn, String recensione) {
+
+        Utente utente = utenteService.ensureUserExistsFromJwt((Jwt) principal);
+
+        repo.aggiornaValutazioneERecensione(utente.getUtenteId(), isbn, null, recensione);
+
+        var updated = repo.findByUtenteIdAndLibroIsbn(utente.getUtenteId(), isbn)
+                .orElseThrow();
+
+        return CatalogoPersonaleMapper.toDto(updated);
+    }
 }
+
+
+
+
