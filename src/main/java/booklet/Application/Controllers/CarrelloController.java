@@ -2,6 +2,7 @@ package booklet.Application.Controllers;
 
 import booklet.Application.DTO.CarrelloDTO;
 import booklet.Application.Services.CarrelloService;
+import booklet.Application.Services.UtenteService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -16,9 +17,11 @@ import org.springframework.web.bind.annotation.*;
 public class CarrelloController {
 
     private final CarrelloService carrelloService;
+    private final UtenteService utenteService;
 
-    public CarrelloController(CarrelloService carrelloService) {
+    public CarrelloController(CarrelloService carrelloService, UtenteService utenteService) {
         this.carrelloService = carrelloService;
+        this.utenteService = utenteService;
     }
 
     // ➤ Aggiungi libro al carrello
@@ -27,7 +30,8 @@ public class CarrelloController {
             @AuthenticationPrincipal Jwt jwt,
             @Valid @RequestBody AddToCartRequest body
     ) {
-        String userId = jwt.getClaimAsString("sub");
+        String userId = jwt.getSubject();      // <-- SUB
+        utenteService.ensureUserExistsFromJwt(jwt);     // <-- FIX FONDAMENTALE!!
         CarrelloDTO dto = carrelloService.aggiungiLibro(userId, body.isbn(), body.quantita());
         return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
@@ -39,7 +43,8 @@ public class CarrelloController {
             @PathVariable("isbn") String isbn,
             @Valid @RequestBody CarrelloController.UpdateQuantitaRequest body
     ) {
-        String userId = jwt.getClaimAsString("sub");
+        String userId = jwt.getSubject();      // <-- SUB
+        utenteService.ensureUserExistsFromJwt(jwt);     // <-- FIX FONDAMENTALE!!
         CarrelloDTO dto = carrelloService.aggiornaQuantita(userId, isbn, body.quantita());
         return ResponseEntity.ok(dto);
     }
@@ -58,21 +63,26 @@ public class CarrelloController {
     // ➤ Ottieni il carrello dell’utente
     @GetMapping
     public ResponseEntity<CarrelloDTO> getCart(@AuthenticationPrincipal Jwt jwt) {
-        String userId = jwt.getClaimAsString("sub");
+        String userId = jwt.getSubject();      // <-- SUB
+        utenteService.ensureUserExistsFromJwt(jwt);     // <-- FIX FONDAMENTALE!!
         CarrelloDTO dto = carrelloService.getCarrello(userId);
         return ResponseEntity.ok(dto);
     }
 
     @PostMapping("/checkout")
     public ResponseEntity<String> checkout(@AuthenticationPrincipal Jwt jwt) {
-        String userId = jwt.getClaimAsString("sub");
+
+        String userId = jwt.getSubject();      // <-- SUB
+        utenteService.ensureUserExistsFromJwt(jwt);     // <-- FIX FONDAMENTALE!!
+
         carrelloService.checkout(userId);
         return ResponseEntity.ok("Checkout completato con successo!");
     }
     // ➤ Svuota completamente il carrello
     @DeleteMapping
     public ResponseEntity<CarrelloDTO> clear(@AuthenticationPrincipal Jwt jwt) {
-        String userId = jwt.getClaimAsString("sub");
+        String userId = jwt.getSubject();      // <-- SUB
+        utenteService.ensureUserExistsFromJwt(jwt) ;
         CarrelloDTO dto = carrelloService.svuota(userId);
         return ResponseEntity.ok(dto);
     }

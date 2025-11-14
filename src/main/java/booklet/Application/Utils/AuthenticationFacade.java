@@ -8,14 +8,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
-
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * Classe di utilità per accedere all'utente autenticato in base ai dati del token JWT.
- * Può restituire direttamente la tua entity Utente dal database oppure le informazioni base.
- */
 @Component
 public class AuthenticationFacade {
 
@@ -25,10 +20,7 @@ public class AuthenticationFacade {
         this.utenteRepository = utenteRepository;
     }
 
-    /**
-     * Restituisce l'entity Utente dal database in base all'email contenuta nel token JWT.
-     * Lancia eccezione se il token non è valido o l'utente non esiste nel DB.
-     */
+
     public Utente getUtenteAutenticatoOrThrow() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
@@ -36,17 +28,15 @@ public class AuthenticationFacade {
             throw new IllegalStateException("Utente non autenticato o token non valido");
         }
 
-        String email = jwt.getClaimAsString("email");
-        if (email == null) {
-            throw new IllegalStateException("Il token JWT non contiene il claim 'email'");
-        }
+        // 🔥 USER ID = SUB
+        String userId = jwt.getSubject();  // <-- ECCO IL CAMBIAMENTO FONDAMENTALE
 
-        return utenteRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalStateException("Utente non trovato nel DB: " + email));
+        return utenteRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("Utente non trovato nel DB (sub): " + userId));
     }
 
     /**
-     * Restituisce solo info base sull'utente autenticato (senza query al DB).
+     * Informazioni leggere, utili per il front-end.
      */
     public SimpleUserInfo getSimpleInfo() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

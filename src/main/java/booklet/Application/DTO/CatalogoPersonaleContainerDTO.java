@@ -1,7 +1,6 @@
 package booklet.Application.DTO;
 
 import java.util.List;
-import java.util.UUID;
 
 public record CatalogoPersonaleContainerDTO(
         String utenteId,

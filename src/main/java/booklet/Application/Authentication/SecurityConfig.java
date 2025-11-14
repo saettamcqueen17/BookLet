@@ -2,6 +2,7 @@ package booklet.Application.Authentication;
 
 
 
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,40 +20,23 @@ import java.util.Set;
 @Configuration
     @EnableMethodSecurity
     public class SecurityConfig {
-
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        var jwtConverter = new booklet.Application.Authentication.JwtAuthConverter();
-
-
-
-
+    SecurityFilterChain securityFilterChain(HttpSecurity http, booklet.Application.Authentication.JwtAuthConverter jwtAuthConverter) throws Exception {
         return http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                // ✅ CORS e CSRF moderni
+                .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
-
-                // ✅ Sessione stateless (per JWT)
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-
-                // ✅ Regole di autorizzazione
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/public/**", "/api/catalogo/**","/api/catalogo/generale").permitAll()
+                        .requestMatchers("/api/public/**").permitAll()
+                        .requestMatchers("/api/catalogo/generale").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/user/**").hasRole("USER")
-                        .requestMatchers("/api/me/**").hasRole("USER")
+                        .requestMatchers("/api/me/**").hasRole("USER")  // il tuo catalogo personale entra qui
                         .anyRequest().authenticated()
                 )
-
-                // ✅ Integrazione con JWT/Keycloak
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtConverter))
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter))
                 )
-
                 .build();
-
     }
 
 

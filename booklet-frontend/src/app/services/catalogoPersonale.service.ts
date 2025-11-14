@@ -11,7 +11,7 @@ export class CatalogoPersonaleService {
 
   constructor(private http: HttpClient) {}
 
-  getCatalogo(utenteId: string): Observable<CatalogoPersonaleContainerDTO> {
-    return this.http.get<CatalogoPersonaleContainerDTO>(`${this.base}/${utenteId}`);
+  getCatalogo() {
+    return this.http.get<CatalogoPersonaleContainerDTO>(`${environment.apiBase}/api/me/catalogo-personale`);
   }
 }

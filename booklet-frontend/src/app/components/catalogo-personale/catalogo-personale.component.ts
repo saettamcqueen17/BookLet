@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal , OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -14,7 +14,7 @@ import { PersonalBookCardComponent } from './personal-card.component';
   templateUrl: './catalogo-personale.component.html',
   styleUrls: ['./catalogo-personale.component.css']
 })
-export class CatalogoPersonaleComponent {
+export class CatalogoPersonaleComponent implements OnInit {
   catalogo = signal<CatalogoPersonaleContainerDTO | null>(null);
   loading = signal<boolean>(true);
   error = signal<string | null>(null);
@@ -29,7 +29,7 @@ export class CatalogoPersonaleComponent {
         switchMap((id) => {
           this.loading.set(true);
           this.error.set(null);
-          return this.service.getCatalogo(id);
+          return this.service.getCatalogo();
         })
       )
       .subscribe({
@@ -44,6 +44,27 @@ export class CatalogoPersonaleComponent {
         }
       });
   }
+
+
+    ngOnInit(): void {
+      this.loading.set(true);
+      this.error.set(null);
+
+      this.service.getCatalogo().subscribe({
+        next: (data) => {
+          this.catalogo.set(data);
+          this.loading.set(false);
+        },
+        error: (err) => {
+          console.error('Errore nel caricamento del catalogo personale:', err);
+          this.error.set('Errore nel caricamento del catalogo personale');
+          this.loading.set(false);
+        }
+      })
+    }
+
+
+
 
   get totaleLibri(): number {
     return this.catalogo()?.totaleLibri ?? 0;

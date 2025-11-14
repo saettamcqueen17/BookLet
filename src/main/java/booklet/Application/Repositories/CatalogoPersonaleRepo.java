@@ -9,61 +9,58 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
 public interface CatalogoPersonaleRepo extends JpaRepository<CatalogoPersonale, Long> {
 
-
-    /**
-     * Restituisce tutti i libri nel catalogo personale di un utente.
-     */
     @PreAuthorize("@ownership.check(#utenteId)")
     @Query("""
-        SELECT c FROM CatalogoPersonale c
-         JOIN FETCH c.libro l
-        WHERE c.utente.id = :utenteId
+        SELECT c
+        FROM CatalogoPersonale c
+        JOIN FETCH c.libro l
+        WHERE c.utente.utenteId = :utenteId
         ORDER BY c.addedAt DESC
     """)
     List<CatalogoPersonale> findByUtenteId(@Param("utenteId") String utenteId);
 
-
+    // ✅ Trova un singolo record per utente + libro
     @PreAuthorize("@ownership.check(#utenteId)")
     @Query("""
-        SELECT c FROM CatalogoPersonale c
-         JOIN FETCH c.libro l
-        WHERE c.utente.id = :utenteId AND c.libro.isbn = :libroIsbn
+        SELECT c
+        FROM CatalogoPersonale c
+        JOIN FETCH c.libro l
+        WHERE c.utente.utenteId = :utenteId
+          AND c.libro.isbn = :libroIsbn
     """)
     Optional<CatalogoPersonale> findByUtenteIdAndLibroIsbn(@Param("utenteId") String utenteId,
-                                                         @Param("libroIsbn") String libroIsbn);
+                                                           @Param("libroIsbn") String libroIsbn);
 
-
-
+    // ✅ Salvataggio con controllo di proprietà
     @Override
-    @PreAuthorize("@ownership.check(#entity.utente.id)")
+    @PreAuthorize("@ownership.check(#entity.utente.utenteId)")
     <S extends CatalogoPersonale> S save(@Param("entity") S entity);
 
-
+    // ✅ Aggiornamento scaffale
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @PreAuthorize("@ownership.check(#utenteId)")
     @Query("""
         UPDATE CatalogoPersonale c
            SET c.scaffale = :scaffale
-         WHERE c.utente.id = :utenteId
+         WHERE c.utente.utenteId = :utenteId
            AND c.libro.isbn = :libroIsbn
     """)
     int aggiornaScaffale(@Param("utenteId") String utenteId,
                          @Param("libroIsbn") String libroIsbn,
                          @Param("scaffale") Scaffale scaffale);
 
-
+    // ✅ Aggiornamento rating e recensione
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @PreAuthorize("@ownership.check(#utenteId)")
     @Query("""
         UPDATE CatalogoPersonale c
            SET c.rating = :rating,
                c.recensione = :recensione
-         WHERE c.utente.id = :utenteId
+         WHERE c.utente.utenteId = :utenteId
            AND c.libro.isbn = :libroIsbn
     """)
     int aggiornaValutazioneERecensione(@Param("utenteId") String utenteId,
@@ -71,18 +68,14 @@ public interface CatalogoPersonaleRepo extends JpaRepository<CatalogoPersonale, 
                                        @Param("rating") Integer rating,
                                        @Param("recensione") String recensione);
 
-
+    @PreAuthorize("@ownership.check(#utenteId)")
+    void deleteByUtente_UtenteIdAndLibro_Isbn(@Param("utenteId") String utenteId,
+                                              @Param("libroIsbn") String libroIsbn);
 
     @PreAuthorize("@ownership.check(#utenteId)")
-    void deleteByUtenteIdAndLibroIsbn(@Param("utenteId") String utenteId,
-                                    @Param("libroIsbn") String libroIsbn);
+    void deleteAllByUtente_UtenteId(@Param("utenteId") String utenteId);
 
     @PreAuthorize("@ownership.check(#utenteId)")
-    void deleteAllByUtenteId(@Param("utenteId") String utenteId);
-
-
-
-    @PreAuthorize("@ownership.check(#utenteId)")
-    boolean existsByUtenteIdAndLibroIsbn(@Param("utenteId") String utenteId,
-                                         @Param("libroIsbn") String libroIsbn);
+    boolean existsByUtente_UtenteIdAndLibro_Isbn(@Param("utenteId") String utenteId,
+                                                 @Param("libroIsbn") String libroIsbn);
 }

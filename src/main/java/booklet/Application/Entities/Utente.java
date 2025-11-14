@@ -2,59 +2,42 @@ package booklet.Application.Entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Table;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
-
-import java.util.UUID;
-
+import java.time.Instant;
 
 @Entity
 @Table(name = "utente")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Utente {
 
-
     @Id
-    @GeneratedValue
-    private String id;
-    @Column(unique = true, nullable = false)
+    @Column(name = "utente_id", nullable = false, unique = true)
+    private String utenteId; // stesso valore del "sub" di Keycloak
+
+    @Column(nullable = false, unique = true)
     private String username;
-    @Column(unique = true, nullable = false)
+
     private String email;
-    @Column(name = "password_hash", nullable = false)
-    private String passwordHash;
+
+    private String ruolo; // opzionale, es. "USER" o "ADMIN"
+
+    @CreationTimestamp
+    private Instant createdAt;
 
 
-    public String getPasswordHash() {
-        return passwordHash;
+    public String getUtenteId(){
+        return this.utenteId;
     }
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username ;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUtenteId(String id_utente) {
+        this.utenteId = id_utente;
     }
 }

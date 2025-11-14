@@ -1,14 +1,17 @@
 package booklet.Application.Services;
 
 import booklet.Application.DTO.CarrelloDTO;
-import booklet.Application.Entities.Carrello;
-import booklet.Application.Entities.OggettoCarrello;
+import booklet.Application.Entities.*;
 import booklet.Application.Mappers.CarrelloMapper;
+import booklet.Application.Repositories.CatalogoPersonaleRepo;
+import booklet.Application.Repositories.LibroRepo;
+import booklet.Application.Repositories.UtenteRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,10 +30,18 @@ public class CarrelloService {
     private final Map<String, Carrello> carrelliPerUtente = new ConcurrentHashMap<>();
     private  CatalogoGeneraleService catalog; // porta server-side per leggere i dati autorevoli del libro
 
-    public CarrelloService(CatalogoGeneraleService catalog) {
+    private UtenteRepository utenteRepository ;
+    private LibroRepo libroRepository ;
+    private CatalogoPersonaleRepo catalogoPersonaleRepo ;
+    public CarrelloService(CatalogoGeneraleService catalog,
+                           CatalogoPersonaleRepo catalogoPersonaleRepo,
+                           UtenteRepository utenteRepository,
+                           LibroRepo libroRepository) {
         this.catalog = catalog;
+        this.catalogoPersonaleRepo = catalogoPersonaleRepo;
+        this.utenteRepository = utenteRepository;
+        this.libroRepository = libroRepository;
     }
-
 
 
     @PreAuthorize("@ownership.check(#utenteId)") // opzionale: rimuovi se non stai ancora usando Security
@@ -70,23 +81,58 @@ public class CarrelloService {
         }
     }
 
+    @PreAuthorize("@ownership.check(#userId)")
     @Transactional
     public void checkout(String userId) {
+
+        Objects.requireNonNull(userId, "L'id utente non può essere nullo");
+
         Carrello carrello = carrelliPerUtente.get(userId);
         if (carrello == null || carrello.getLibriNelCarrello().isEmpty()) {
             throw new IllegalStateException("Il carrello è vuoto o non esiste per l'utente " + userId);
         }
 
+        // 1️⃣ Carica l'utente dal DB usando il SUB (userId)
+        Utente utente = utenteRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("Utente non trovato nel DB: " + userId));
+
+        // 2️⃣ Costruiamo mappa ISBN → quantità per aggiornare le scorte
         ConcurrentHashMap<String, Integer> libriEQuantita = new ConcurrentHashMap<>();
         for (OggettoCarrello oggetto : carrello.getLibriNelCarrello()) {
             libriEQuantita.put(oggetto.getIsbn(), oggetto.getQuantita());
         }
 
+        // 3️⃣ Aggiorna disponibilità nel catalogo generale
         catalog.aggiornaDisponibilitaPerCheckout(libriEQuantita);
 
-        // Svuota il carrello in memoria
+        // 4️⃣ Aggiorna il catalogo personale
+        for (OggettoCarrello oggetto : carrello.getLibriNelCarrello()) {
+
+            String isbn = oggetto.getIsbn();
+
+            // Prendo l'entità Libro dal DB
+            Libro libro = libroRepository.findById(isbn)
+                    .orElseThrow(() -> new IllegalStateException("Libro non trovato nel DB: " + isbn));
+
+            // Se è già presente nel catalogo personale, non lo duplico
+            boolean esisteGia = catalogoPersonaleRepo
+                    .existsByUtente_UtenteIdAndLibro_Isbn(userId, isbn);
+
+            if (!esisteGia) {
+                CatalogoPersonale voce = new CatalogoPersonale();
+                voce.setUtente(utente);
+                voce.setLibro(libro);
+                voce.setScaffale(CatalogoPersonale.Scaffale.DaLeggere);
+                voce.setAddedAt(Instant.now());
+                // rating e recensione null all'inizio
+                catalogoPersonaleRepo.save(voce);
+            }
+        }
+
+        // 5️⃣ Svuota il carrello in memoria
         carrello.getLibriNelCarrello().clear();
     }
+
 
     @PreAuthorize("@ownership.check(#utenteId)")
     public CarrelloDTO aggiornaQuantita(String utenteId, String rawIsbn, int nuovaQuantita) {

@@ -1,9 +1,14 @@
 package booklet.Application.Entities;
 
+import booklet.Application.Entities.Libro;
+import booklet.Application.Entities.Utente;
 import jakarta.persistence.*;
+import lombok.Data;
+
 import java.time.Instant;
 
 @Entity
+@Data
 @Table(
         name = "catalogo_personale",
         uniqueConstraints = @UniqueConstraint(columnNames = {"utente_id","libro_isbn"}),
@@ -16,19 +21,21 @@ public class CatalogoPersonale {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id;       // <-- DEVE ESSERE LONG, NON STRING
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "utente_id", nullable = false)
+    private Utente utente;    // <-- UNICA MAPPATURA di utente_id
 
-    @ManyToOne(optional = false) @JoinColumn(name = "utente_id")
-    private Utente utente; //
-     @ManyToOne(optional = false) @JoinColumn(name = "libro_isbn")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "libro_isbn", nullable = false)
     private Libro libro;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 24, nullable = false)
-    private Scaffale scaffale = Scaffale.DaLeggere; // stato personale
+    private Scaffale scaffale = Scaffale.DaLeggere;
 
-    private Integer rating; //
+    private Integer rating;
 
     @Column(length = 4000)
     private String recensione;
@@ -38,17 +45,5 @@ public class CatalogoPersonale {
 
     public enum Scaffale { DaLeggere, StaiLeggendo, Finito }
 
-    // getters/setters
 
-    public Utente getUtente() { return utente; }
-    public void setUtente(Utente utente) { this.utente = utente; }
-    public Libro getLibro() { return libro; }
-    public void setLibro(Libro libro) { this.libro = libro; }
-    public Scaffale getScaffale() { return scaffale; }
-    public void setScaffale(Scaffale scaffale) { this.scaffale = scaffale; }
-    public Integer getRating() { return rating; }
-    public void setRating(Integer rating) { this.rating = rating; }
-    public String getRecensione() { return recensione; }
-    public void setRecensione(String recensione) { this.recensione = recensione; }
-    public Instant getAddedAt() { return addedAt; }
 }

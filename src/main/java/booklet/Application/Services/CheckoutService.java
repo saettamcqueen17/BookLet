@@ -2,7 +2,6 @@ package booklet.Application.Services;
 
 import booklet.Application.Repositories.CatalogoGeneraleRepo;
 import lombok.RequiredArgsConstructor;
-import java.util.UUID;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
