@@ -1,5 +1,6 @@
 package booklet.Application.Controllers;
 
+import booklet.Application.DTO.LibroDTO;
 import booklet.Application.Entities.Libro;
 import booklet.Application.Services.CatalogoGeneraleService;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ public class CatalogoGeneraleController {
 
     // ✅ mostra solo libri con disponibilità > 0
     @GetMapping("/generale")
-    public List<Libro> getCatalogoGenerale() {
+    public List<LibroDTO> getCatalogoGenerale() {
         return service.getCatalogoDisponibile();
     }
 }

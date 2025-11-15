@@ -150,8 +150,11 @@ public class CatalogoGeneraleService implements CarrelloService.CatalogQueryPort
         }
     }
 
-    public List<Libro> getCatalogoDisponibile() {
-        return libroRepo.findByDisponibilitaGreaterThan(0);
+    public List<LibroDTO> getCatalogoDisponibile() {
+        return repo.findByDisponibilitaGreaterThan(0)
+                .stream()
+                .map(LibroMapper::toDto)
+                .collect(Collectors.toList());
     }
     private static void validaPrezzo(BigDecimal prezzo) {
         if (prezzo == null || prezzo.signum() < 0) {

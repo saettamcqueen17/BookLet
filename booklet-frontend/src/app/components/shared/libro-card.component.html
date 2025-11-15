@@ -1,7 +1,7 @@
 <ng-container *ngIf="libro as l">
   <mat-card class="libro-card">
     <img mat-card-image
-         [src]="l.immagine_copertina || 'assets/placeholder.png'"
+         [src]="l.immagineLibro || 'assets/placeholder.png'"
          [alt]="l.titolo || 'Copertina libro'" />
 
     <mat-card-title>{{ l.titolo }}</mat-card-title>
