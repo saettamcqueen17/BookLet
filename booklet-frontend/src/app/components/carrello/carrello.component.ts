@@ -1,5 +1,4 @@
 
-
 import { Component, signal } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -7,7 +6,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CarrelloService } from '../../services/carrello.service';
 import { CarrelloDTO, OggettoCarrelloDTO } from '../../models/carrello';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -51,38 +49,31 @@ export class CarrelloComponent {
     return this.carrello()?.numeroTotaleOggetti ?? 0;
   }
 
-  /** --- METODI DI SERVIZIO --- */
   aggiornaQuantita(isbn: string, value: number): void {
     const quantita = Number.isFinite(value) ? Math.max(0, Math.trunc(value)) : 0;
     this.loading.set(true);
     this.error.set(null);
 
-    this.carrelloService
-      .aggiornaQuantita(isbn, quantita)
-      .pipe(takeUntilDestroyed())
-      .subscribe({
-        next: (cart) => {
-          this.carrello.set(cart);
-          this.loading.set(false);
-        },
-        error: (err) => this.handleError(err)
-      });
+    this.carrelloService.aggiornaQuantita(isbn, quantita).subscribe({
+      next: (cart) => {
+        this.carrello.set(cart);
+        this.loading.set(false);
+      },
+      error: (err) => this.handleError(err)
+    });
   }
 
   rimuovi(isbn: string): void {
     this.loading.set(true);
     this.error.set(null);
 
-    this.carrelloService
-      .rimuoviDalCarrello(isbn)
-      .pipe(takeUntilDestroyed())
-      .subscribe({
-        next: (cart) => {
-          this.carrello.set(cart);
-          this.loading.set(false);
-        },
-        error: (err) => this.handleError(err)
-      });
+    this.carrelloService.rimuoviDalCarrello(isbn).subscribe({
+      next: (cart) => {
+        this.carrello.set(cart);
+        this.loading.set(false);
+      },
+      error: (err) => this.handleError(err)
+    });
   }
 
   svuota(): void {
@@ -91,67 +82,50 @@ export class CarrelloComponent {
     this.loading.set(true);
     this.error.set(null);
 
-    this.carrelloService
-      .svuotaCarrello()
-      .pipe(takeUntilDestroyed())
-      .subscribe({
-        next: (cart) => {
-          this.carrello.set(cart);
-          this.loading.set(false);
-        },
-        error: (err) => this.handleError(err)
-      });
+    this.carrelloService.svuotaCarrello().subscribe({
+      next: (cart) => {
+        this.carrello.set(cart);
+        this.loading.set(false);
+      },
+      error: (err) => this.handleError(err)
+    });
   }
 
   private caricaCarrello(): void {
     this.loading.set(true);
     this.error.set(null);
 
-    this.carrelloService
-      .getCarrello()
-      .pipe(takeUntilDestroyed())
-      .subscribe({
-        next: (cart) => {
-          this.carrello.set(cart);
-          this.loading.set(false);
-        },
-        error: (err) => this.handleError(err)
-      });
+    this.carrelloService.getCarrello().subscribe({
+      next: (cart) => {
+        this.carrello.set(cart);
+        this.loading.set(false);
+      },
+      error: (err) => this.handleError(err)
+    });
   }
 
-  /** --- CHECKOUT --- */
   checkout(): void {
     this.loading.set(true);
     this.error.set(null);
 
     this.carrelloService.checkout().subscribe({
       next: () => {
-        // ✅ Svuota il carrello tramite signal
-        const current = this.carrello();
-        if (current) {
-          this.carrello.set({
-            ...current,
-            oggetti: [],
-            numeroTotaleOggetti: 0,
-            totale: 0
-          });
-        }
+        this.carrello.set({
+          oggetti: [],
+          numeroTotaleOggetti: 0,
+          totale: 0
+        });
 
         this.loading.set(false);
-        this.snackBar.open('Checkout completato con successo!', 'Chiudi', {
-          duration: 3000
-        });
+        this.snackBar.open('Checkout completato con successo!', 'Chiudi', { duration: 3000 });
       },
       error: (err) => {
         this.handleError(err);
-        this.snackBar.open('Errore durante il checkout', 'Chiudi', {
-          duration: 4000
-        });
+        this.snackBar.open('Errore durante il checkout', 'Chiudi', { duration: 4000 });
       }
     });
   }
 
-  /** --- ERROR HANDLER --- */
   private handleError(err: unknown): void {
     console.error('Errore durante l\'operazione sul carrello', err);
     this.error.set('Si è verificato un problema nel comunicare con il carrello.');

@@ -35,7 +35,6 @@ public class CatalogoPersonaleController {
         return ResponseEntity.ok(result);
     }
 
-    // PUT modifica recensione
     @PutMapping("/{isbn}/recensione")
     public ResponseEntity<CatalogoPersonaleDTO> aggiornaRecensione(
             @AuthenticationPrincipal Jwt jwt,
@@ -46,7 +45,6 @@ public class CatalogoPersonaleController {
         return ResponseEntity.ok(result);
     }
 
-    // ====== RICHIESTE JSON ======
     public record ScaffaleRequest(CatalogoPersonale.Scaffale scaffale) {}
     public record RecensioneRequest(String recensione) {}
 }

@@ -24,7 +24,6 @@ public class CarrelloController {
         this.utenteService = utenteService;
     }
 
-    // ➤ Aggiungi libro al carrello
     @PostMapping("/items")
     public ResponseEntity<CarrelloDTO> addItem(
             @AuthenticationPrincipal Jwt jwt,
@@ -36,7 +35,6 @@ public class CarrelloController {
         return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 
-    // ➤ Aggiorna quantità di un libro
     @PatchMapping("/items/{isbn}")
     public ResponseEntity<CarrelloDTO> updateQty(
             @AuthenticationPrincipal Jwt jwt,
@@ -49,7 +47,6 @@ public class CarrelloController {
         return ResponseEntity.ok(dto);
     }
 
-    // ➤ Rimuovi un libro dal carrello
     @DeleteMapping("/items/{isbn}")
     public ResponseEntity<CarrelloDTO> removeItem(
             @AuthenticationPrincipal Jwt jwt,
@@ -60,7 +57,6 @@ public class CarrelloController {
         return ResponseEntity.ok(dto);
     }
 
-    // ➤ Ottieni il carrello dell’utente
     @GetMapping
     public ResponseEntity<CarrelloDTO> getCart(@AuthenticationPrincipal Jwt jwt) {
         String userId = jwt.getSubject();      // <-- SUB
@@ -72,8 +68,8 @@ public class CarrelloController {
     @PostMapping("/checkout")
     public ResponseEntity<String> checkout(@AuthenticationPrincipal Jwt jwt) {
 
-        String userId = jwt.getSubject();      // <-- SUB
-        utenteService.ensureUserExistsFromJwt(jwt);     // <-- FIX FONDAMENTALE!!
+        String userId = jwt.getSubject();
+        utenteService.ensureUserExistsFromJwt(jwt);
 
         carrelloService.checkout(userId);
         return ResponseEntity.ok("Checkout completato con successo!");
@@ -81,7 +77,7 @@ public class CarrelloController {
     // ➤ Svuota completamente il carrello
     @DeleteMapping
     public ResponseEntity<CarrelloDTO> clear(@AuthenticationPrincipal Jwt jwt) {
-        String userId = jwt.getSubject();      // <-- SUB
+        String userId = jwt.getSubject();
         utenteService.ensureUserExistsFromJwt(jwt) ;
         CarrelloDTO dto = carrelloService.svuota(userId);
         return ResponseEntity.ok(dto);

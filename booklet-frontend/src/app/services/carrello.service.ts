@@ -27,6 +27,7 @@ export interface AggiornaQuantitaRequest {
 
 @Injectable({ providedIn: 'root' })
 export class CarrelloService {
+
   private apiUrl = `${environment.apiBase}/api/me/carrello`;
 
   constructor(private http: HttpClient) {}
@@ -36,24 +37,24 @@ export class CarrelloService {
   }
 
   aggiungiAlCarrello(isbn: string, quantita = 1): Observable<CarrelloDTO> {
-    const body: AggiungiItemRequest = { isbn, quantita: quantita };
+    const body: AggiungiItemRequest = { isbn, quantita };
     return this.http.post<CarrelloDTO>(`${this.apiUrl}/items`, body);
   }
 
   aggiornaQuantita(isbn: string, quantita: number): Observable<CarrelloDTO> {
-    const body: AggiornaQuantitaRequest = { quantita: quantita };
+    const body: AggiornaQuantitaRequest = { quantita };
     return this.http.patch<CarrelloDTO>(`${this.apiUrl}/items/${encodeURIComponent(isbn)}`, body);
   }
 
-  checkout() {
-    return this.http.post(`${this.apiUrl}/checkout`, {}, { responseType: 'text' });
+  rimuoviDalCarrello(isbn: string): Observable<CarrelloDTO> {
+    return this.http.delete<CarrelloDTO>(`${this.apiUrl}/items/${encodeURIComponent(isbn)}`);
   }
 
   svuotaCarrello(): Observable<CarrelloDTO> {
     return this.http.delete<CarrelloDTO>(this.apiUrl);
   }
 
-  rimuoviDalCarrello(isbn: string): Observable<CarrelloDTO> {
-    return this.http.delete<CarrelloDTO>(`${this.apiUrl}/items/${encodeURIComponent(isbn)}`);
+  checkout() {
+    return this.http.post(`${this.apiUrl}/checkout`, {}, { responseType: 'text' });
   }
 }

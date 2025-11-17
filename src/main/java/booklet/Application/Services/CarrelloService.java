@@ -92,29 +92,23 @@ public class CarrelloService {
             throw new IllegalStateException("Il carrello è vuoto o non esiste per l'utente " + userId);
         }
 
-        // 1️⃣ Carica l'utente dal DB usando il SUB (userId)
         Utente utente = utenteRepository.findById(userId)
                 .orElseThrow(() -> new IllegalStateException("Utente non trovato nel DB: " + userId));
 
-        // 2️⃣ Costruiamo mappa ISBN → quantità per aggiornare le scorte
         ConcurrentHashMap<String, Integer> libriEQuantita = new ConcurrentHashMap<>();
         for (OggettoCarrello oggetto : carrello.getLibriNelCarrello()) {
             libriEQuantita.put(oggetto.getIsbn(), oggetto.getQuantita());
         }
 
-        // 3️⃣ Aggiorna disponibilità nel catalogo generale
         catalog.aggiornaDisponibilitaPerCheckout(libriEQuantita);
 
-        // 4️⃣ Aggiorna il catalogo personale
         for (OggettoCarrello oggetto : carrello.getLibriNelCarrello()) {
 
             String isbn = oggetto.getIsbn();
 
-            // Prendo l'entità Libro dal DB
             Libro libro = libroRepository.findById(isbn)
                     .orElseThrow(() -> new IllegalStateException("Libro non trovato nel DB: " + isbn));
 
-            // Se è già presente nel catalogo personale, non lo duplico
             boolean esisteGia = catalogoPersonaleRepo
                     .existsByUtente_UtenteIdAndLibro_Isbn(userId, isbn);
 
@@ -124,12 +118,10 @@ public class CarrelloService {
                 voce.setLibro(libro);
                 voce.setScaffale(CatalogoPersonale.Scaffale.DaLeggere);
                 voce.setAddedAt(Instant.now());
-                // rating e recensione null all'inizio
                 catalogoPersonaleRepo.save(voce);
             }
         }
 
-        // 5️⃣ Svuota il carrello in memoria
         carrello.getLibriNelCarrello().clear();
     }
 
@@ -183,14 +175,26 @@ public class CarrelloService {
     @PreAuthorize("@ownership.check(#utenteId)")
     public CarrelloDTO svuota(String utenteId) {
         Objects.requireNonNull(utenteId, "L'id utente non può essere nullo");
-        Carrello carrello = carrelliPerUtente.computeIfAbsent(utenteId, __ -> new Carrello());
+
+        Carrello carrello = carrelliPerUtente.remove(utenteId);
+
+        if (carrello == null) {
+            return new CarrelloDTO(
+                    Collections.emptyList(),
+                    0,
+                    BigDecimal.ZERO
+            );
+        }
+
         synchronized (carrello) {
             carrello.svuota();
-            return CarrelloMapper.toDto(carrello);
+            return new CarrelloDTO(
+                    Collections.emptyList(),
+                    0,
+                    BigDecimal.ZERO
+            );
         }
     }
-
-
 
 
  @PreAuthorize("@ownership.check(#utenteId)") public CarrelloDTO getCarrello(String utenteId) {
