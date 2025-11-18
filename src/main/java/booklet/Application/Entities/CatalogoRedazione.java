@@ -1,57 +1,45 @@
 package booklet.Application.Entities;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "catalogo_redazione")
 public class CatalogoRedazione {
 
-
     @Id
-    private String isbn;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @OneToOne
-    @MapsId
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "isbn", referencedColumnName = "isbn")
-    private CatalogoGenerale libro;
+    private Libro libro;
 
-    @Column(nullable = false)
-    private Genere genere;
+    @Column(name = "data_inserimento")
+    private LocalDateTime dataInserimento;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "genere")
+    private String genere;
+
+    @Column(name = "recensione")
     private String recensione;
 
+    @Column(name = "valutazione_redazione")
     private Double valutazioneRedazione;
 
-    @Column(nullable = false)
-    private LocalDateTime dataInserimento = LocalDateTime.now();
+    @Column(name = "visibile")
+    private Boolean visibile;
 
-    @Column(nullable = false)
-    private boolean visibile = true;
+    public CatalogoRedazione(Libro libro) {
+        this.libro = libro ;
+    }
 
-    public CatalogoRedazione() {}
+    public CatalogoRedazione() {
 
+    }
 
-
-    public String getIsbn() { return isbn; }
-    public void setIsbn(String isbn) { this.isbn = isbn; }
-
-    public CatalogoGenerale getLibro() { return libro; }
-    public void setLibro(CatalogoGenerale libro) { this.libro = libro; }
-
-    public Genere getGenere() { return genere; }
-    public void setGenere(Genere genere) { this.genere = this.genere; }
-
-    public String getRecensione() { return recensione; }
-    public void setRecensione(String recensione) { this.recensione = recensione; }
-
-    public Double getValutazioneRedazione() { return valutazioneRedazione; }
-    public void setValutazioneRedazione(Double valutazioneRedazione) { this.valutazioneRedazione = valutazioneRedazione; }
-
-    public LocalDateTime getDataInserimento() { return dataInserimento; }
-    public void setDataInserimento(LocalDateTime dataInserimento) { this.dataInserimento = dataInserimento; }
-
-    public boolean isVisibile() { return visibile; }
-    public void setVisibile(boolean visibile) { this.visibile = visibile; }
+    public Libro getLibro() {
+        return libro ;
+    }
 }

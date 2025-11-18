@@ -31,7 +31,10 @@ export class CatalogoGeneraleService {
     this.baseUrl = this.combineUrl(apiBaseUrl, '/api/catalogo');
     console.log('✅ [CatalogoGeneraleService] Base URL:', this.baseUrl);
   }
-
+  getTutti(): Observable<Libro[]> {
+    const url = `${this.baseUrl}/generale`;
+    return this.http.get<Libro[]>(url);
+  }
   lista(page = 0, size = 20, sort?: string): Observable<Page<Libro>> {
     let params = new HttpParams()
       .set('page', String(page))

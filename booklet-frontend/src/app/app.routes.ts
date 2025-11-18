@@ -11,6 +11,7 @@ import { CatalogoGeneraleComponent } from './components/catalogo-generale/catalo
 import { CatalogoRedazioneComponent } from './components/catalogo-redazione/catalogo-redazione.component';
 import { CatalogoPersonaleComponent } from './components/catalogo-personale/catalogo-personale.component';
 import { CarrelloComponent } from './components/carrello/carrello.component';
+import {GestioneRedazioneComponent} from './components/catalogo-redazione/gestione-redazione/gestione-redazione.component';
 
 export const authGuard: CanActivateFn = async (route, state) => {
   const router = inject(Router);
@@ -41,7 +42,17 @@ export const authGuard: CanActivateFn = async (route, state) => {
     {path: '', component: HomeComponent},
     {path: 'home', component: HomeComponent},
     {path: 'catalogo-generale', component: CatalogoGeneraleComponent},
-    {path: 'redazione', component: CatalogoRedazioneComponent, canActivate: [authGuard], data: {role: 'REDAZIONE'}},
+    {
+      path: 'redazione',
+      component: CatalogoRedazioneComponent
+    },
+    {
+      path: 'redazione/gestione',
+      component: GestioneRedazioneComponent,
+      canActivate: [authGuard],
+      data: { role: 'REDAZIONE' }
+    },
+
     {path: 'login', component: LoginComponent},
     {path: 'catalogo-personale', component: CatalogoPersonaleComponent},
     {path: 'carrello', component: CarrelloComponent },

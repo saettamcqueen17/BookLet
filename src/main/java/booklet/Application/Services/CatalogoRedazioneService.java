@@ -1,82 +1,59 @@
 package booklet.Application.Services;
 
-import booklet.Application.Entities.CatalogoGenerale;
+import booklet.Application.DTO.LibroDTO;
 import booklet.Application.Entities.CatalogoRedazione;
-import booklet.Application.Entities.Genere;
 import booklet.Application.Entities.Libro;
-import booklet.Application.Repositories.CatalogoGeneraleRepo;
+import booklet.Application.Mappers.LibroMapper;
 import booklet.Application.Repositories.CatalogoRedazioneRepo;
+import booklet.Application.Repositories.LibroRepo;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class CatalogoRedazioneService {
 
     private final CatalogoRedazioneRepo redazioneRepo;
-    private final CatalogoGeneraleRepo generaleRepo;
+    private final LibroRepo libroRepo;
 
-    public CatalogoRedazioneService(CatalogoRedazioneRepo redazioneRepo,
-                                    CatalogoGeneraleRepo generaleRepo) {
+    public CatalogoRedazioneService(CatalogoRedazioneRepo redazioneRepo, LibroRepo libroRepo) {
         this.redazioneRepo = redazioneRepo;
-        this.generaleRepo = generaleRepo;
+        this.libroRepo = libroRepo;
     }
 
-    @Transactional
-    public CatalogoRedazione aggiungiScheda(String isbn, Genere genere, String recensione, Double voto) {
-        CatalogoGenerale libro = generaleRepo.findByIsbn(isbn)
-                .orElseThrow(() -> new IllegalArgumentException("Libro non trovato"));
-
-        CatalogoRedazione scheda = new CatalogoRedazione();
-        scheda.setLibro(libro);
-        scheda.setGenere(genere);
-        scheda.setRecensione(recensione);
-        scheda.setValutazioneRedazione(voto);
-        scheda.setVisibile(true);
-
-        return redazioneRepo.save(scheda);
-    }
-
-    public void rimuoviScheda(String isbn) {
-        redazioneRepo.deleteById(isbn);
-    }
-
-    public List<CatalogoRedazione> getTutti() {
-        return redazioneRepo.findAll();
-    }
-
-    public List<CatalogoRedazione> getVisibili() {
-        return redazioneRepo.findByVisibileTrue();
+    /**
+     * Restituisce il catalogo della redazione
+     * (lista di LibroDTO, ottenuti da Libro tramite LibroMapper).
+     */
+    @Transactional(readOnly = true)
+    public List<LibroDTO> getCatalogoRedazione() {
+        return redazioneRepo.findAll()
+                .stream()
+                .map(CatalogoRedazione::getLibro)
+                .map(LibroMapper::toDto)
+                .collect(Collectors.toList());
     }
 
 
-    @Transactional
-    public CatalogoRedazione aggiungiLibroARedazione(String isbn, Genere genere,
-                                                     String recensione, Double voto) {
-
-        CatalogoGenerale libro = generaleRepo.findByIsbn(isbn)
-                .orElseThrow(() -> new IllegalArgumentException("Libro non trovato nel catalogo generale."));
-
-
-        CatalogoRedazione scheda = redazioneRepo.findById(isbn)
-                .orElse(new CatalogoRedazione());
-        scheda.setLibro(libro);
-        scheda.setIsbn(libro.getIsbn());
-        scheda.setGenere(genere);
-        scheda.setRecensione(recensione);
-        scheda.setValutazioneRedazione(voto);
-        scheda.setVisibile(true);
-
-        return redazioneRepo.save(scheda);
-    }
-
-
-    @Transactional
-    public void rimuoviLibroDaRedazione(String isbn) {
-        if (!redazioneRepo.existsById(isbn)) {
-            throw new IllegalArgumentException("Nessuna scheda redazionale trovata per ISBN: " + isbn);
+    public void aggiungiLibroARedazione(String isbn) {
+        // se è già presente, non facciamo nulla (puoi anche lanciare eccezione se preferisci)
+        if (redazioneRepo.existsByLibroIsbn(isbn)) {
+            return;
         }
-        redazioneRepo.deleteById(isbn);
+
+        Libro libro = libroRepo.findById(isbn)
+                .orElseThrow(() -> new EntityNotFoundException("Libro non trovato: " + isbn));
+
+        CatalogoRedazione r = new CatalogoRedazione(libro);
+        redazioneRepo.save(r);
+    }
+
+
+    public void rimuoviLibroDaRedazione(String isbn) {
+        redazioneRepo.deleteByLibroIsbn(isbn);
     }
 }

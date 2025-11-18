@@ -1,1 +1,7 @@
-<p>catalogo-redazione works!</p>
+<button
+  *ngIf="auth.hasRole('REDAZIONE')"
+  mat-raised-button
+  color="accent"
+  routerLink="/redazione/gestione">
+  Gestione Redazione
+</button>
