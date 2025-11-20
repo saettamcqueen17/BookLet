@@ -4,6 +4,14 @@ export interface SchedaRedazione {
   genere?: string;          // nel backend è "genere", tienilo allineato se serve
   recensione?: string | null;
   valutazioneRedazione?: number | null;
-  dataInserimento?: string;    // ISO
   visibile: boolean;
+
+  titolo : string  ;
+  autore : string ;
+  immagineLibro : string  ;
+  prezzo : bigint ;
+
+
+
+
 }

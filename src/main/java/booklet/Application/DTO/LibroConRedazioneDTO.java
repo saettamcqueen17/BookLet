@@ -1,5 +1,7 @@
 package booklet.Application.DTO;
 
+import booklet.Application.Entities.Genere;
+
 import java.math.BigDecimal;
 
 public record LibroConRedazioneDTO(
@@ -7,7 +9,7 @@ public record LibroConRedazioneDTO(
         String titolo,
         String autore,
         String immagineLibro,
-        String genere,
+        Genere genere,
         BigDecimal prezzo,
 
         // parte redazione

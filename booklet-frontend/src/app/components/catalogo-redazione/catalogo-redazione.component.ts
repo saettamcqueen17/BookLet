@@ -3,31 +3,16 @@ import { CommonModule } from '@angular/common';
 import { RedazioneService } from '../../services/redazione.service';
 import { SchedaRedazione } from '../../models/catalogo-redazione';
 import { AuthService } from '../../services/auth.service';
+import {MatCardModule} from '@angular/material/card';
+import {RouterModule} from '@angular/router';
+import {MatButtonModule} from '@angular/material/button';
 
 @Component({
   selector: 'app-catalogo-redazione',
   standalone: true,
-  imports: [CommonModule],
-  template: `
-    <h2>Catalogo Redazione</h2>
-    <p class="muted">Mostro solo le voci visibili</p>
-
-    <button
-      *ngIf="auth.getRoles().includes('REDAZIONE')"
-      mat-raised-button
-      color="accent"
-      routerLink="/redazione/gestione">
-      Gestione Redazione
-    </button>
-
-    <ul>
-      <li *ngFor="let s of schede">
-        <b>{{ s.isbn }}</b> — {{ s.genere || 'N/D' }}
-        <span *ngIf="s.valutazioneRedazione"> · ★ {{ s.valutazioneRedazione }}</span>
-        <div *ngIf="s.recensione">{{ s.recensione }}</div>
-      </li>
-    </ul>
-  `
+  imports: [CommonModule, MatCardModule, RouterModule, MatButtonModule],
+  templateUrl: './catalogo-redazione.component.html',
+  styleUrls: ['./catalogo-redazione.component.css']
 })
 export class CatalogoRedazioneComponent implements OnInit {
   schede: SchedaRedazione[] = [];

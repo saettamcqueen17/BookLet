@@ -1,7 +1,40 @@
-<button
-  *ngIf="auth.hasRole('REDAZIONE')"
-  mat-raised-button
-  color="accent"
-  routerLink="/redazione/gestione">
-  Gestione Redazione
-</button>
+<div class="container">
+  <h2 class="title">Catalogo Redazione</h2>
+
+  <div class="cards">
+    <mat-card *ngFor="let s of schede" class="scheda-card">
+
+      <img mat-card-image [src]="s.immagineLibro" alt="copertina" />
+
+      <mat-card-header>
+        <mat-card-title>{{ s.titolo }}</mat-card-title>
+        <mat-card-subtitle>{{ s.autore }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p><strong>Genere:</strong> {{ s.genere }}</p>
+        <p><strong>Prezzo:</strong> € {{ s.prezzo }}</p>
+
+        <div class="redazione">
+          <p><strong>Recensione redazione:</strong></p>
+          <p>{{ s.recensione || "Nessuna recensione" }}</p>
+
+          <p><strong>Valutazione:</strong>
+            <span *ngIf="s.valutazioneRedazione; else nv">
+              ⭐ {{ s.valutazioneRedazione }}/5
+            </span>
+            <ng-template #nv>Non valutato</ng-template>
+          </p>
+
+          <p>
+            <strong>Visibile:</strong>
+            <span [class.visible]="s.visibile" [class.nonvisibile]="!s.visibile">
+              {{ s.visibile ? "Sì" : "No" }}
+            </span>
+          </p>
+        </div>
+      </mat-card-content>
+
+    </mat-card>
+  </div>
+</div>

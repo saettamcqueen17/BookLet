@@ -42,4 +42,16 @@ public class CatalogoRedazione {
     public Libro getLibro() {
         return libro ;
     }
+
+    public String getRecensione() {
+        return recensione ;
+    }
+
+    public double getValutazioneRedazione() {
+        return valutazioneRedazione ;
+    }
+
+    public boolean getVisibile() {
+        return visibile ;
+    }
 }

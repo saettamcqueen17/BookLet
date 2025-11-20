@@ -3,6 +3,7 @@ package booklet.Application.Controllers;
 import booklet.Application.DTO.LibroConRedazioneDTO;
 import booklet.Application.Entities.CatalogoGenerale;
 import booklet.Application.Entities.CatalogoRedazione;
+import booklet.Application.Repositories.CatalogoGeneraleRepo;
 import booklet.Application.Repositories.CatalogoRedazioneRepo;
 import booklet.Application.Services.CatalogoRedazioneService;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +17,12 @@ import java.util.List;
 public class CatalogoRedazioneController {
 
     private final CatalogoRedazioneService service;
+    private final CatalogoGeneraleRepo catalogoGeneraleRepo;
 
     private  final CatalogoRedazioneRepo redazioneRepo  ;
-    public CatalogoRedazioneController(CatalogoRedazioneService service, CatalogoRedazioneRepo redazioneRepo) {
+    public CatalogoRedazioneController(CatalogoRedazioneService service, CatalogoGeneraleRepo catalogoGeneraleRepo, CatalogoRedazioneRepo redazioneRepo) {
         this.service = service;
+        this.catalogoGeneraleRepo = catalogoGeneraleRepo;
         this.redazioneRepo = redazioneRepo;
     }
 
@@ -41,7 +44,6 @@ public class CatalogoRedazioneController {
                     libro.getGenere(),
                     libro.getPrezzo(),
 
-                    // parte redazione (opzionale)
                     scheda != null ? scheda.getRecensione() : null,
                     scheda != null ? scheda.getValutazioneRedazione() : null,
                     scheda != null ? scheda.getVisibile() : false

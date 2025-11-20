@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Libro } from '../models/libro';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import {SchedaRedazione} from '../models/catalogo-redazione';
 
 @Injectable({ providedIn: 'root' })
 export class RedazioneService {
@@ -11,8 +12,8 @@ export class RedazioneService {
 
   constructor(private http: HttpClient) {}
 
-  getCatalogo(): Observable<Libro[]> {
-    return this.http.get<Libro[]>(this.base);
+  getCatalogo(): Observable<SchedaRedazione[]> {
+    return this.http.get<SchedaRedazione[]>(this.base);
   }
 
   aggiungiLibro(isbn: string): Observable<void> {
