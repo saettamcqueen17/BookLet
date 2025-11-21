@@ -54,4 +54,17 @@ public class CatalogoRedazione {
     public boolean getVisibile() {
         return visibile ;
     }
+
+    public void setVisibile(boolean visibile) {
+        this.visibile = visibile ;
+    }
+
+    public void setRecensione(String recensione) {
+        this.recensione = recensione
+                 ;
+    }
+
+    public void setValutazioneRedazione(Double valutazione) {
+        this.valutazioneRedazione = valutazione ;
+    }
 }

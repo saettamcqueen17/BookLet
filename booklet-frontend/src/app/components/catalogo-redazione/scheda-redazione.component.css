@@ -1,0 +1,25 @@
+.red-card {
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 10px;
+}
+
+.cover {
+  height: 220px;
+  width: 150px;
+  object-fit: cover;
+  margin: 10px auto;
+  border-radius: 6px;
+  box-shadow: 0 0 5px #aaa;
+}
+
+mat-card-content {
+  font-size: 14px;
+}
+
+mat-card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

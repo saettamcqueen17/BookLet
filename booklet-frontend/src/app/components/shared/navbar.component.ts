@@ -1,52 +1,40 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
-import { KeycloakService } from 'keycloak-angular';
-import { AuthStatusService } from '../../services/AuthStatusService';
+
+import { AuthService } from '../../services/auth.service';
+import { AuthStateService } from '../../services/AuthStatusService';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    MatToolbarModule,
-    MatButtonModule,
-  ],
+  imports: [CommonModule, RouterModule, MatToolbarModule, MatButtonModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
+
   isLoggedIn = false;
 
-  constructor(
-    private keycloak: KeycloakService,
-    private authStatus: AuthStatusService,
-    private router: Router
-  ) {
-  }
+  private auth = inject(AuthService);
+  private authState = inject(AuthStateService);
+  private router = inject(Router);
 
   ngOnInit(): void {
-    this.authStatus.authenticated$.subscribe(isAuth => {
-      this.isLoggedIn = isAuth;
-      console.log('🔁 Navbar aggiornata: isLoggedIn =', this.isLoggedIn);
+    this.authState.logged$.subscribe(isLogged => {
+      this.isLoggedIn = isLogged;
     });
   }
 
-  async login(): Promise<void> {
-    await this.keycloak.login({redirectUri: window.location.origin + '/home'});
-    await this.authStatus.refreshStatus();
+  login() {
+    return this.auth.login('/home');
   }
 
-  async logout(): Promise<void> {
-    await this.keycloak.logout(window.location.origin + '/home');
-    this.authStatus.setAuthenticated(false);
-    await this.router.navigate(['/home']);
-  }
-
-  myCatalogoLink(): string {
-    return '/catalogo-personale';
+  async logout() {
+    await this.auth.logout();
+    this.authState.setLogged(false);
+    this.router.navigate(['/home']);
   }
 }

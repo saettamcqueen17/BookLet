@@ -1,0 +1,14 @@
+.griglia {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+  padding: 20px 0;
+}
+
+.banner-redazione {
+  background: #e3f2fd;
+  padding: 10px 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  border: 1px solid #90caf9;
+}

@@ -1,8 +1,7 @@
-// TypeScript
-// file: 'booklet-frontend/src/app/services/auth.service.ts'
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import Keycloak, { KeycloakInstance, KeycloakInitOptions } from 'keycloak-js';
+import { AuthStateService } from './AuthStatusService';
 
 type UserInfo = { id?: string; username?: string; email?: string };
 
@@ -20,11 +19,11 @@ export class AuthService {
   private readonly RTOK_KEY = 'kc_refreshToken';
   private readonly IDTOK_KEY = 'kc_idToken';
 
-  private startupInit?: Promise<void>;
-
+  private state = inject(AuthStateService);
 
   constructor(@Inject(PLATFORM_ID) platformId: Object) {
     this.isBrowser = isPlatformBrowser(platformId);
+
     if (this.isBrowser) {
       this.kc = new (Keycloak as any)({
         url: this.url,
@@ -32,34 +31,27 @@ export class AuthService {
         clientId: this.clientId
       }) as KeycloakInstance;
 
-      // Aggiorna storage su eventi di auth
-      this.kc.onAuthSuccess = () => this.saveTokens();
-      this.kc.onAuthRefreshSuccess = () => this.saveTokens();
-      this.kc.onAuthLogout = () => this.clearTokens();
+      this.kc.onAuthSuccess = () => {
+        this.saveTokens();
+        this.state.setLogged(true);
+      };
+
+      this.kc.onAuthRefreshSuccess = () => {
+        this.saveTokens();
+      };
+
+      this.kc.onAuthLogout = () => {
+        this.clearTokens();
+        this.state.setLogged(false);
+      };
+
       this.kc.onTokenExpired = () => {
-        this.kc?.updateToken(30).catch(() => this.login(window.location.pathname));
+        this.kc?.updateToken(30).then(() => this.saveTokens());
       };
     }
   }
 
-  initSession(): Promise<void> {
-    if (!this.isBrowser || !this.kc) return Promise.resolve();
-    if (!this.startupInit) {
-      this.startupInit = this.ensureInit()
-        .then(async (authenticated) => {
-          if (!authenticated) {
-            await this.login(window.location.pathname);
-          }
-        })
-        .then(() => void 0)
-        .catch(() => void 0);
-    }
-    return this.startupInit;
-  }
-
-  isAuthenticatedSig = (): boolean => this.kc?.authenticated === true;
-
-  private loadStoredTokens(): { token?: string; refreshToken?: string; idToken?: string } {
+  private loadStoredTokens() {
     if (!this.isBrowser) return {};
     return {
       token: sessionStorage.getItem(this.TOK_KEY) || undefined,
@@ -68,14 +60,14 @@ export class AuthService {
     };
   }
 
-  private saveTokens(): void {
+  private saveTokens() {
     if (!this.isBrowser || !this.kc) return;
     if (this.kc.token) sessionStorage.setItem(this.TOK_KEY, this.kc.token);
     if (this.kc.refreshToken) sessionStorage.setItem(this.RTOK_KEY, this.kc.refreshToken);
     if ((this.kc as any).idToken) sessionStorage.setItem(this.IDTOK_KEY, (this.kc as any).idToken);
   }
 
-  private clearTokens(): void {
+  private clearTokens() {
     if (!this.isBrowser) return;
     sessionStorage.removeItem(this.TOK_KEY);
     sessionStorage.removeItem(this.RTOK_KEY);
@@ -84,8 +76,10 @@ export class AuthService {
 
   private ensureInit(): Promise<boolean> {
     if (!this.isBrowser || !this.kc) return Promise.resolve(false);
+
     if (!this.initPromise) {
       const stored = this.loadStoredTokens();
+
       const opts: KeycloakInitOptions = {
         onLoad: 'check-sso',
         pkceMethod: 'S256',
@@ -93,15 +87,20 @@ export class AuthService {
         silentCheckSsoRedirectUri: window.location.origin + '/assets/silent-check-sso.html',
         token: stored.token,
         refreshToken: stored.refreshToken,
-        idToken: stored.idToken
+        idToken: stored.idToken,
       };
+
       this.initPromise = this.kc.init(opts)
         .then(authenticated => {
-          if (authenticated) this.saveTokens();
+          if (authenticated) {
+            this.saveTokens();
+            this.state.setLogged(true);
+          }
           return authenticated;
         })
         .catch(() => false);
     }
+
     return this.initPromise;
   }
 
@@ -113,47 +112,51 @@ export class AuthService {
 
   async getToken(): Promise<string | null> {
     if (!this.isBrowser || !this.kc) return null;
+
     const ok = await this.ensureInit();
     if (!ok) return null;
+
     try {
       await this.kc.updateToken(30);
       this.saveTokens();
-    } catch {
-      return null;
-    }
-    return this.kc.token ?? null;
+    } catch {}
+
+    return sessionStorage.getItem(this.TOK_KEY) ?? null;
   }
 
-  login(redirectTo?: string): Promise<void> {
+  login(redirectTo?: string) {
     if (!this.isBrowser || !this.kc) return Promise.resolve();
-    const targetPath = redirectTo?.startsWith('/') ? redirectTo : window.location.pathname;
-    const redirectUri = window.location.origin + targetPath;
+    const redirectUri = window.location.origin + (redirectTo || window.location.pathname);
     return this.kc.login({ redirectUri });
   }
 
-  logout(): Promise<void> {
+  logout() {
     if (!this.isBrowser || !this.kc) return Promise.resolve();
     this.clearTokens();
     return this.kc.logout({ redirectUri: window.location.origin + '/' });
   }
 
-  async handleAuthCallback(): Promise<void> {
-    await this.ensureInit();
+  async getRolesAsync(): Promise<string[]> {
+    const token = sessionStorage.getItem(this.TOK_KEY);
+    if (!token) return [];
+
+    const payload = JSON.parse(atob(token.split('.')[1]));
+
+    const realmRoles = payload?.realm_access?.roles ?? [];
+    const clientRoles = Object.values(payload?.resource_access ?? {})
+      .flatMap((r: any) => r.roles ?? []);
+
+    return [...realmRoles, ...clientRoles];
   }
 
   getUser(): UserInfo {
-    const tp: any = (this.kc as any)?.tokenParsed ?? {};
+    const token = sessionStorage.getItem(this.TOK_KEY);
+    if (!token) return {};
+    const p = JSON.parse(atob(token.split('.')[1]));
     return {
-      id: tp?.sub,
-      username: tp?.preferred_username,
-      email: tp?.email
+      id: p.sub,
+      username: p.preferred_username,
+      email: p.email
     };
-  }
-
-  getRoles(clientId = this.clientId): string[] {
-    const tp: any = (this.kc as any)?.tokenParsed ?? {};
-    const realmRoles: string[] = tp?.realm_access?.roles ?? [];
-    const clientRoles: string[] = tp?.resource_access?.[clientId]?.roles ?? [];
-    return [...realmRoles, ...clientRoles];
   }
 }

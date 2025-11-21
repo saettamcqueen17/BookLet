@@ -52,6 +52,24 @@ public class CatalogoRedazioneService {
         redazioneRepo.save(r);
     }
 
+    @Transactional
+    public void cambiaVisibile(String isbn, boolean visibile) {
+        CatalogoRedazione scheda = redazioneRepo.findByLibroIsbn(isbn)
+                .orElseThrow();
+        scheda.setVisibile(visibile);
+        redazioneRepo.save(scheda);
+    }
+
+    @Transactional
+    public void modificaRecensione(String isbn, String recensione, Double valutazione) {
+        CatalogoRedazione scheda = redazioneRepo.findByLibroIsbn(isbn)
+                .orElseThrow();
+
+        scheda.setRecensione(recensione);
+        scheda.setValutazioneRedazione(valutazione);
+        redazioneRepo.save(scheda);
+    }
+
 
     public void rimuoviLibroDaRedazione(String isbn) {
         redazioneRepo.deleteByLibroIsbn(isbn);

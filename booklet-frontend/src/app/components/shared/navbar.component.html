@@ -1,4 +1,5 @@
 <mat-toolbar color="primary" class="navbar">
+
   <span class="brand">📚 <strong>BookLet</strong></span>
 
   <span class="spacer"></span>
@@ -11,21 +12,19 @@
   <!-- 🔹 Visibile solo se autenticato -->
   <button
     mat-button
-    *ngIf="isLoggedIn && myCatalogoLink() as link"
-    [routerLink]="link"
-  >
+    *ngIf="isLoggedIn"
+    routerLink="/catalogo-personale">
     Il mio catalogo
   </button>
 
   <span class="spacer"></span>
 
-  <!-- 🔹 Mostra "Login" solo se non autenticato -->
+  <!-- 🔹 Mostra "Login" solo se NON autenticato -->
   <button
     mat-raised-button
     color="accent"
     *ngIf="!isLoggedIn"
-    (click)="login()"
-  >
+    (click)="login()">
     Login
   </button>
 
@@ -34,8 +33,8 @@
     mat-raised-button
     color="warn"
     *ngIf="isLoggedIn"
-    (click)="logout()"
-  >
+    (click)="logout()">
     Logout
   </button>
+
 </mat-toolbar>

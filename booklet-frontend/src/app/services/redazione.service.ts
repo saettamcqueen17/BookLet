@@ -15,7 +15,16 @@ export class RedazioneService {
   getCatalogo(): Observable<SchedaRedazione[]> {
     return this.http.get<SchedaRedazione[]>(this.base);
   }
+  updateVisibile(isbn: string, visibile: boolean) {
+    return this.http.put(`${environment.apiBase}/api/redazione/${isbn}/visibile`, { visibile });
+  }
 
+  updateRecensione(isbn: string, recensione: string, valutazione: number | null) {
+    return this.http.put(`${environment.apiBase}/api/redazione/${isbn}/recensione`, {
+      recensione,
+      valutazione
+    });
+  }
   aggiungiLibro(isbn: string): Observable<void> {
     return this.http.post<void>(`${this.base}/${isbn}`, {});
   }

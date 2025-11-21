@@ -1,31 +1,71 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RedazioneService } from '../../services/redazione.service';
-import { SchedaRedazione } from '../../models/catalogo-redazione';
+
 import { AuthService } from '../../services/auth.service';
-import {MatCardModule} from '@angular/material/card';
-import {RouterModule} from '@angular/router';
-import {MatButtonModule} from '@angular/material/button';
+import { AuthStateService } from '../../services/AuthStatusService';
+import { RedazioneService } from '../../services/redazione.service';
+
+import { SchedaRedazione } from '../../models/catalogo-redazione';
+import { SchedaRedazioneComponent } from './scheda-redazione.component';
 
 @Component({
   selector: 'app-catalogo-redazione',
   standalone: true,
-  imports: [CommonModule, MatCardModule, RouterModule, MatButtonModule],
   templateUrl: './catalogo-redazione.component.html',
-  styleUrls: ['./catalogo-redazione.component.css']
+  styleUrls: ['./catalogo-redazione.component.css'],
+  imports: [CommonModule, SchedaRedazioneComponent]
 })
 export class CatalogoRedazioneComponent implements OnInit {
+
   schede: SchedaRedazione[] = [];
+  ruoloRedazione = false;
 
-  constructor(
-    private api: RedazioneService,
-    public auth: AuthService
-  ) {}
+  private auth = inject(AuthService);
+  private authState = inject(AuthStateService);
+  private redazioneService = inject(RedazioneService);
 
-  ngOnInit(): void {
-    this.api.getCatalogo().subscribe({
-      next: (res) => this.schede = res,
-      error: (err) => console.error('Errore nel caricamento:', err)
+  async ngOnInit() {
+
+    console.log("Catalogo Redazione — ngOnInit() PARTITO");
+
+    // 🔥 Aspetto che AuthService sia stabilizzato
+    await this.auth.isLoggedIn();
+
+    const roles = await this.auth.getRolesAsync();
+    console.log("Ruoli:", roles);
+
+    this.ruoloRedazione = roles.includes("REDAZIONE");
+
+    this.redazioneService.getCatalogo().subscribe(res => {
+
+      if (this.ruoloRedazione) {
+        this.schede = res; // tutti i libri
+      } else {
+        this.schede = res.filter(x => x.visibile); // solo visibili
+      }
+
+      console.log("Catalogo finale:", this.schede);
+    });
+
+  }
+
+
+  modificaRecensione(s: SchedaRedazione) {
+    console.log("Modifica:", s);
+  }
+
+  toggleVisibile(s: SchedaRedazione) {
+    const nuovo = !s.visibile;
+    this.redazioneService.updateVisibile(s.isbn, nuovo).subscribe({
+      next: () => s.visibile = nuovo,
+      error: err => console.error("Errore toggle:", err)
+    });
+  }
+
+  rimuovi(isbn: string) {
+    this.redazioneService.rimuoviLibro(isbn).subscribe({
+      next: () => this.schede = this.schede.filter(s => s.isbn !== isbn),
+      error: err => console.error("Errore rimozione:", err)
     });
   }
 }

@@ -29,10 +29,8 @@ export const authGuard: CanActivateFn = async (route, state) => {
 
     const requiredRole = route.data?.['role'] as string | undefined;
     if (requiredRole) {
-      const roles = auth.getRoles();
-      if (!roles.includes(requiredRole)) {
-        return router.parseUrl('/home');
-      }
+      const roles = auth.getRolesAsync();
+
     }
     return true;
   });
@@ -42,16 +40,12 @@ export const authGuard: CanActivateFn = async (route, state) => {
     {path: '', component: HomeComponent},
     {path: 'home', component: HomeComponent},
     {path: 'catalogo-generale', component: CatalogoGeneraleComponent},
+
     {
       path: 'redazione',
       component: CatalogoRedazioneComponent
     },
-    {
-      path: 'redazione/gestione',
-      component: GestioneRedazioneComponent,
-      canActivate: [authGuard],
-      data: { role: 'REDAZIONE' }
-    },
+
 
     {path: 'login', component: LoginComponent},
     {path: 'catalogo-personale', component: CatalogoPersonaleComponent},
