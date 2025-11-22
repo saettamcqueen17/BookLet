@@ -106,9 +106,21 @@ export class AuthService {
 
   async isLoggedIn(): Promise<boolean> {
     if (!this.isBrowser || !this.kc) return false;
-    const ok = await this.ensureInit();
-    return ok && !!this.kc.authenticated;
+
+    // ⚠️ Prima assicuriamo l'init
+    await this.ensureInit();
+
+    // ⚠️ Poi proviamo a fare refresh token se scaduto
+    try {
+      await this.kc.updateToken(30);
+      this.saveTokens();
+    } catch {
+      return false;
+    }
+
+    return !!this.kc.authenticated;
   }
+
 
   async getToken(): Promise<string | null> {
     if (!this.isBrowser || !this.kc) return null;

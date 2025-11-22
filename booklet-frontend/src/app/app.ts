@@ -35,11 +35,18 @@ export class App implements AfterViewInit {
   async ngAfterViewInit() {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    const logged = await this.auth.isLoggedIn();
-    this.authState.setLogged(logged);
+    // 🔥 Inizializza Keycloak DAVVERO prima del resto
+    await this.auth.isLoggedIn();
 
+    // 🔥 Ora Keycloak è inizializzato
+    const logged = this.authState.logged;
     if (!logged) {
       await this.auth.login('/home');
+      return;
     }
+
+    console.log("Keycloak completamente inizializzato");
   }
+
 }
+

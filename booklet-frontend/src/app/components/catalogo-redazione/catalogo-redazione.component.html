@@ -1,18 +1,38 @@
 <h1>Catalogo Redazione</h1>
-<h1 style="color:red;font-size:40px">TEST TEMPLATE</h1>
 
-<div *ngIf="ruoloRedazione" class="banner-redazione">
-  <p>Sei un membro REDAZIONE — modalità gestione attiva</p>
+<h2>TEST TEMPLATE 🟢</h2>
+
+
+<div *ngIf="loading">
+  <p>Caricamento catalogo...</p>
 </div>
 
-<div class="griglia">
-  <app-scheda-redazione
-    *ngFor="let s of schede"
-    [scheda]="s"
-    [isRedazione]="ruoloRedazione"
-    (modifica)="modificaRecensione($event)"
-    (toggle)="toggleVisibile($event)"
-    (rimuovi)="rimuovi($event)">
-  </app-scheda-redazione>
+<div *ngIf="!loading">
+
+  <div *ngIf="ruoloRedazione" class="banner-redazione">
+    <p>Sei un membro REDAZIONE — modalità gestione attiva</p>
+  </div>
+
+  <ng-container *ngIf="schede">
+
+    <div class="griglia" *ngIf="schede && schede.length > 0">
+
+      <app-scheda-redazione
+        *ngFor="let s of schede"
+        [scheda]="s"
+        [isRedazione]="ruoloRedazione"
+        (modifica)="modificaRecensione($event)"
+        (toggle)="toggleVisibile($event)"
+        (rimuovi)="rimuovi($event)">
+      </app-scheda-redazione>
+
+    </div>
+
+  </ng-container>
+
 </div>
+
+
+
+
 

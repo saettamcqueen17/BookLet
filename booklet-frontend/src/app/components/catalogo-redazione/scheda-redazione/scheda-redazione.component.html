@@ -1,0 +1,48 @@
+<mat-card class="red-card">
+  <ng-container *ngIf="scheda as sc">
+    <img
+      class="cover"
+      [src]="sc.immagineLibro || 'assets/img/placeholder.png'"
+      alt="copertina"
+    />
+
+    <mat-card-header>
+      <mat-card-title>{{ sc.titolo }}</mat-card-title>
+      <mat-card-subtitle>{{ sc.autore }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <p><b>Genere:</b> {{ sc.genere }}</p>
+      <p><b>Prezzo:</b> € {{ sc.prezzo }}</p>
+
+      <p *ngIf="sc.recensione">
+        <b>Recensione:</b> {{ sc.recensione }}
+      </p>
+
+      <p *ngIf="sc.valutazioneRedazione">
+        <b>Valutazione:</b> ⭐ {{ sc.valutazioneRedazione }}/5
+      </p>
+    </mat-card-content>
+
+    <mat-card-actions *ngIf="isRedazione" class="actions">
+      <button mat-flat-button color="primary" (click)="modifica.emit(sc)">
+        ✏️ Modifica
+      </button>
+
+      <mat-slide-toggle
+        color="accent"
+        [checked]="sc.visibile"
+        (change)="toggle.emit(sc)"
+      >
+        Visibile
+      </mat-slide-toggle>
+
+      <button mat-button color="warn" (click)="rimuovi.emit(sc.isbn)">
+        🗑 Rimuovi
+      </button>
+    </mat-card-actions>
+  </ng-container>
+
+  <!-- fallback (evita errori) -->
+  <div *ngIf="!scheda" class="scheda-loading"></div>
+  </mat-card>
