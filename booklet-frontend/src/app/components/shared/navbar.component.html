@@ -1,40 +1,37 @@
 <mat-toolbar color="primary" class="navbar">
 
-  <span class="brand">📚 <strong>BookLet</strong></span>
+  <span class="brand"><strong>BookLet</strong></span>
 
-  <span class="spacer"></span>
+  <div class="right-container">
 
-  <button mat-button routerLink="/home">Home</button>
-  <button mat-button routerLink="/catalogo-generale">Catalogo Generale</button>
-  <button mat-button routerLink="/carrello">Carrello</button>
-  <button mat-button routerLink="/redazione">Redazione</button>
+    <button mat-button routerLink="/home">Home</button>
+    <button mat-button routerLink="/catalogo-generale">Catalogo Generale</button>
+    <button mat-button routerLink="/carrello">Carrello</button>
+    <button mat-button routerLink="/redazione">Redazione</button>
 
-  <!-- 🔹 Visibile solo se autenticato -->
-  <button
-    mat-button
-    *ngIf="isLoggedIn"
-    routerLink="/catalogo-personale">
-    Il mio catalogo
-  </button>
+    <button
+      mat-button
+      *ngIf="isLoggedIn"
+      routerLink="/catalogo-personale">
+      Il mio catalogo
+    </button>
 
-  <span class="spacer"></span>
+    <button
+      mat-raised-button
+      color="accent"
+      *ngIf="!isLoggedIn"
+      (click)="login()">
+      Login
+    </button>
 
-  <!-- 🔹 Mostra "Login" solo se NON autenticato -->
-  <button
-    mat-raised-button
-    color="accent"
-    *ngIf="!isLoggedIn"
-    (click)="login()">
-    Login
-  </button>
+    <button
+      mat-raised-button
+      color="warn"
+      *ngIf="isLoggedIn"
+      (click)="logout()">
+      Logout
+    </button>
 
-  <!-- 🔹 Mostra "Logout" solo se autenticato -->
-  <button
-    mat-raised-button
-    color="warn"
-    *ngIf="isLoggedIn"
-    (click)="logout()">
-    Logout
-  </button>
+  </div>
 
 </mat-toolbar>

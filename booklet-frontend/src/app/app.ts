@@ -12,11 +12,7 @@ import { AuthStateService } from './services/AuthStatusService';
   standalone: true,
   imports: [CommonModule, RouterOutlet, MatToolbarModule, NavbarComponent],
   template: `
-    <mat-toolbar class="navbar">
-      <span style="font-weight:700">Booklet</span>
-      <span class="spacer"></span>
-      <app-navbar></app-navbar>
-    </mat-toolbar>
+    <app-navbar></app-navbar>
 
     <router-outlet></router-outlet>
 
@@ -24,6 +20,7 @@ import { AuthStateService } from './services/AuthStatusService';
       © 2025 Booklet – Tutti i diritti riservati
     </footer>
   `,
+
 })
 export class App implements AfterViewInit {
 

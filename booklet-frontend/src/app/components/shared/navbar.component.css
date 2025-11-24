@@ -1,21 +1,28 @@
+/* NAVBAR BASE */
 .navbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 0 1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* BRAND A SINISTRA */
 .brand {
   font-size: 1.4rem;
   font-weight: 600;
   color: #fff;
 }
 
-.spacer {
-  flex: 1 1 auto;
+/* CONTENITORE DEI BOTTONI A DESTRA */
+.right-container {
+  margin-left: auto !important;     /* 👉 Spinge tutto a destra */
+  display: flex !important;
+  align-items: center;
+  gap: 0.6rem;
+  width: auto !important;           /* 👉 fondamentale: evita il 100% */
 }
 
+/* BOTTONI */
 button[mat-button],
 button[mat-raised-button] {
   margin: 0 0.4rem;
@@ -23,6 +30,7 @@ button[mat-raised-button] {
   text-transform: none;
 }
 
+/* Stile pulsanti personalizzati */
 button[mat-raised-button][color="accent"] {
   background-color: #ffca28;
   color: #212121;
@@ -37,6 +45,14 @@ button:hover {
   opacity: 0.9;
 }
 
+/* BACKGROUND TOOLBAR */
 mat-toolbar {
   background: linear-gradient(90deg, #3f51b5 0%, #303f9f 100%);
+}
+
+/* FORZA LA STRUTTURA INTERNA DI ANGULAR MATERIAL */
+mat-toolbar,
+mat-toolbar .mat-toolbar-row {
+  display: flex !important;
+  align-items: center !important;
 }

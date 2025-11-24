@@ -53,7 +53,7 @@ public class CatalogoRedazioneController {
         }).toList();
     }
 
-    @PreAuthorize("hasAuthority('REDAZIONE')")
+    @PreAuthorize("hasRole('REDAZIONE')")
     @PutMapping("/{isbn}/visibile")
     public ResponseEntity<Void> cambiaVisibile(
             @PathVariable String isbn,
@@ -63,7 +63,7 @@ public class CatalogoRedazioneController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasAuthority('REDAZIONE')")
+    @PreAuthorize("hasRole('REDAZIONE')")
     @PutMapping("/{isbn}/recensione")
     public ResponseEntity<Void> modificaRecensione(
             @PathVariable String isbn,
@@ -76,14 +76,14 @@ public class CatalogoRedazioneController {
     public record RecensioneRequest(String recensione, Double valutazione) {}
 
 
-    @PreAuthorize("hasAuthority('REDAZIONE')")
+    @PreAuthorize("hasRole('REDAZIONE')")
     @PostMapping("/{isbn}")
     public ResponseEntity<Void> aggiungi(@PathVariable String isbn) {
         service.aggiungiLibroARedazione(isbn);
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasAuthority('REDAZIONE')")
+    @PreAuthorize("hasRole('REDAZIONE')")
     @DeleteMapping("/{isbn}")
     public ResponseEntity<Void> rimuovi(@PathVariable String isbn) {
         service.rimuoviLibroDaRedazione(isbn);

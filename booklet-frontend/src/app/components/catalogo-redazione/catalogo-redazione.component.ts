@@ -4,6 +4,10 @@ import { AuthService } from '../../services/auth.service';
 import { RedazioneService } from '../../services/redazione.service';
 import { SchedaRedazione } from '../../models/catalogo-redazione';
 import { SchedaRedazioneComponent } from './scheda-redazione/scheda-redazione.component';
+import { MatDialog } from '@angular/material/dialog';
+import { RedazioneReviewDialogComponent } from './redazione-review-dialog.component';
+
+
 
 @Component({
   selector: 'app-catalogo-redazione',
@@ -16,10 +20,13 @@ export class CatalogoRedazioneComponent implements OnInit {
 
   schede: SchedaRedazione[] = [];
   ruoloRedazione = false;
-  loading = true;   // all'inizio sto caricando
+  loading = true;
 
   private auth = inject(AuthService);
   private redazioneService = inject(RedazioneService);
+
+  private dialog = inject(MatDialog);
+
 
   ngOnInit() {
     this.auth.isLoggedIn().then(logged => {
@@ -62,7 +69,35 @@ export class CatalogoRedazioneComponent implements OnInit {
 
 
   modificaRecensione(s: SchedaRedazione) {
-    console.log('Modifica:', s);
+    const dialogRef = this.dialog.open(RedazioneReviewDialogComponent, {
+      width: '550px',
+      data: {
+        isbn: s.isbn,
+        titolo: s.titolo,
+        autore: s.autore,
+        rating: s.valutazioneRedazione,
+        recensione: s.recensione
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) return;
+
+      this.redazioneService.updateRecensione(
+        s.isbn,
+        result.recensione,
+        result.valutazione
+      ).subscribe({
+        next: () => {
+          // aggiorno la UI localmente
+          s.recensione = result.recensione;
+          s.valutazioneRedazione = result.valutazione;
+
+
+        },
+        error: err => console.error(err)
+      });
+    });
   }
 
   toggleVisibile(s: SchedaRedazione) {
