@@ -6,7 +6,6 @@ import booklet.Application.Entities.Libro;
 
 public class LibroMapper {
 
-    /* ==================== MAPPATURA da CATALOGO GENERALE ==================== */
 
     public static LibroDTO toDto(CatalogoGenerale entity) {
         LibroDTO dto = new LibroDTO();
@@ -34,7 +33,6 @@ public class LibroMapper {
         return c;
     }
 
-    /* ==================== MAPPATURA da LIBRO ==================== */
 
     public static LibroDTO toDto(Libro entity) {
         LibroDTO dto = new LibroDTO();

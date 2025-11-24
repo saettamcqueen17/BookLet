@@ -12,8 +12,8 @@ export interface Libro {
   autore?: string;
   prezzo?: number;
   immagineLibro?: string;
-  casa_editrice?: string;
-  categoria?: string;
+  casaEditrice?: string;
+  genere?: string;
   disponibilita?: number;
 }
 
