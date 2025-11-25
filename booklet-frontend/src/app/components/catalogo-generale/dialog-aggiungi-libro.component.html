@@ -1,0 +1,50 @@
+<h2>Aggiungi nuovo libro</h2>
+
+<form [formGroup]="form">
+
+  <mat-form-field appearance="outline">
+    <mat-label>Titolo</mat-label>
+    <input matInput formControlName="titolo">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Autore</mat-label>
+    <input matInput formControlName="autore">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>ISBN</mat-label>
+    <input matInput formControlName="isbn">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Casa editrice</mat-label>
+    <input matInput formControlName="casaEditrice">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Genere</mat-label>
+    <input matInput formControlName="genere">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>URL copertina</mat-label>
+    <input matInput formControlName="immagineUrl">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Disponibilità</mat-label>
+    <input type="number" matInput formControlName="disponibilita">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Prezzo (€)</mat-label>
+    <input type="number" matInput formControlName="prezzo">
+  </mat-form-field>
+
+  <div style="display:flex; justify-content:end; gap:1rem;">
+    <button mat-button (click)="annulla()">Annulla</button>
+    <button mat-raised-button color="primary" (click)="salva()">Salva</button>
+  </div>
+
+</form>

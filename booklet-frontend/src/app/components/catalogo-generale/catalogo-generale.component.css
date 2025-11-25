@@ -51,3 +51,26 @@
   background: rgba(0, 0, 0, 0.08);
   color: #424242;
 }
+.container {
+  height: 100%;
+}
+
+.burger {
+  position: sticky;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+}
+
+.filter-field {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.title {
+  margin-top: 10px;
+}
+
+.subtitle {
+  margin-top: 20px;
+}

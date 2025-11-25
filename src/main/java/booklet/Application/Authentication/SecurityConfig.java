@@ -2,6 +2,7 @@ package booklet.Application.Authentication;
 
 
 
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +29,7 @@ import java.util.Set;
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/public/**").permitAll()
-                        .requestMatchers("/api/catalogo/generale").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/catalogo/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/me/**").hasRole("USER")  // il tuo catalogo personale entra qui
                         .anyRequest().authenticated()

@@ -5,14 +5,85 @@
 
   <div *ngIf="!caricamento && errore" class="error">{{ errore }}</div>
 
-  <div *ngIf="!caricamento && !errore && libri.length === 0" class="empty">
+  <div *ngIf="!caricamento && !errore && libriFiltrati.length === 0" class="empty">
     Nessun libro disponibile al momento.
   </div>
 
-  <div class="catalogo-container" *ngIf="!caricamento && !errore && libri.length > 0">
+  <!-- Catalogo filtrato -->
+  <div class="catalogo-container" *ngIf="!caricamento && !errore && libriFiltrati.length > 0">
     <app-libro-card
-      *ngFor="let libro of libri; trackBy: trackByIsbn"
-      [libro]="libro"
-    ></app-libro-card>
+      *ngFor="let libro of libriFiltrati; trackBy: trackByIsbn"
+      [libro]="libro">
+    </app-libro-card>
   </div>
 </section>
+
+
+<!-- SEZIONE ADMIN -->
+<div *ngIf="ruoloAdmin" class="admin-panel">
+  <button mat-raised-button color="primary" (click)="apriDialogAggiungiLibro()">
+    ➕ Aggiungi libro
+  </button>
+</div>
+
+<div *ngIf="ruoloAdmin"
+     class="admin-panel"
+     style="margin-top: 1rem; display:flex; gap:1rem; align-items:center;">
+
+  <mat-form-field appearance="outline">
+    <mat-label>Rimuovi libro per ISBN</mat-label>
+    <input matInput [(ngModel)]="isbnDaRimuovere">
+  </mat-form-field>
+
+  <button mat-raised-button color="warn" (click)="rimuoviLibro()">
+    🗑️ Rimuovi
+  </button>
+
+</div>
+
+
+<!-- FILTRI (BURGER MENU) -->
+<mat-sidenav-container class="container">
+
+  <mat-sidenav #drawer mode="over">
+    <h3 class="title">Filtri</h3>
+
+    <!-- filtro titolo -->
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Cerca titolo</mat-label>
+      <input matInput [(ngModel)]="filtroTitolo" (input)="applicaFiltri()">
+    </mat-form-field>
+
+    <!-- filtro per genere -->
+    <h4 class="subtitle">Genere</h4>
+    <mat-selection-list [(ngModel)]="filtroGenere" (selectionChange)="applicaFiltri()">
+      <mat-list-option *ngFor="let g of generi" [value]="g">
+        {{ g }}
+      </mat-list-option>
+    </mat-selection-list>
+
+    <!-- ordinamento -->
+    <h4 class="subtitle">Ordina per</h4>
+    <mat-radio-group [(ngModel)]="ordinamento" (change)="applicaFiltri()">
+      <mat-radio-button value="titolo">Titolo (A→Z)</mat-radio-button><br>
+      <mat-radio-button value="prezzo">Prezzo (crescente)</mat-radio-button><br>
+      <mat-radio-button value="prezzoDesc">Prezzo (decrescente)</mat-radio-button>
+    </mat-radio-group>
+
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+
+    <!-- pulsante burger -->
+    <button mat-icon-button (click)="drawer.toggle()" class="burger">
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <!-- catalogo filtrato -->
+
+
+  </mat-sidenav-content>
+
+</mat-sidenav-container>
+
+
