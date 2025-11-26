@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
 
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -45,23 +46,24 @@ export class CatalogoGeneraleComponent implements OnInit, OnDestroy {
   private http = inject(HttpClient);
   private router = inject(Router);
   private dialog = inject(MatDialog);
+  private auth = inject(AuthService);
 
-  // dati catalogo
+
   libriOriginali: any[] = [];
   libriFiltrati: any[] = [];
 
-  // filtri
+
   generi: string[] = [];
   filtroTitolo: string = '';
   filtroGenere: string[] = [];
   ordinamento: string = 'titolo';
 
-  // stato UI
+
   caricamento = false;
   errore: string | null = null;
 
-  // admin
-  ruoloAdmin = false;        // per ora lo lasciamo false fisso (puoi riagganciare AuthService dopo)
+
+  ruoloAdmin = false;
   isbnDaRimuovere: string = '';
 
   private navSub?: Subscription;
@@ -69,13 +71,20 @@ export class CatalogoGeneraleComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.caricaLibri();
     this.caricaGeneri();
+
+    this.auth.isLoggedIn().then(async (logged) => {
+      if (logged) {
+        const roles = await this.auth.getRolesAsync();
+        this.ruoloAdmin = roles.includes('ADMIN');
+      }
+    });
   }
+
 
   ngOnDestroy(): void {
     this.navSub?.unsubscribe();
   }
 
-  // 🔥 CARICAMENTO CATALOGO — endpoint corretto
   caricaLibri() {
     this.caricamento = true;
     this.errore = null;
@@ -96,7 +105,6 @@ export class CatalogoGeneraleComponent implements OnInit, OnDestroy {
       });
   }
 
-  // 🔥 CARICAMENTO GENERI
   caricaGeneri() {
     this.http.get<string[]>(`${environment.apiBase}/api/catalogo/generi`)
       .subscribe({
@@ -105,11 +113,9 @@ export class CatalogoGeneraleComponent implements OnInit, OnDestroy {
       });
   }
 
-  // 🔍 FILTRI + ORDINAMENTO
   applicaFiltri() {
     let risultato = [...this.libriOriginali];
 
-    // filtro per titolo
     if (this.filtroTitolo.trim() !== '') {
       const query = this.filtroTitolo.toLowerCase();
       risultato = risultato.filter(l =>
@@ -117,14 +123,12 @@ export class CatalogoGeneraleComponent implements OnInit, OnDestroy {
       );
     }
 
-    // filtro per genere
     if (this.filtroGenere.length > 0) {
       risultato = risultato.filter(l =>
         this.filtroGenere.includes(l.genere)
       );
     }
 
-    // ordinamento
     switch (this.ordinamento) {
       case 'titolo':
         risultato.sort((a, b) => (a.titolo || '').localeCompare(b.titolo || ''));
@@ -140,12 +144,10 @@ export class CatalogoGeneraleComponent implements OnInit, OnDestroy {
     this.libriFiltrati = risultato;
   }
 
-  // 🧱 TRACK BY
   trackByIsbn(_: number, libro: any) {
     return libro?.isbn ?? libro?.id ?? _;
   }
 
-  // 🛠️ ADMIN — dialog aggiunta libro
   apriDialogAggiungiLibro() {
     const ref = this.dialog.open(DialogAggiungiLibroComponent, {
       width: '450px',
@@ -158,7 +160,6 @@ export class CatalogoGeneraleComponent implements OnInit, OnDestroy {
     });
   }
 
-  // 🛠️ ADMIN — rimozione libro per ISBN
   rimuoviLibro() {
     const isbn = this.isbnDaRimuovere.trim();
     if (!isbn) {

@@ -1,5 +1,13 @@
 <section class="section">
-  <h2>Catalogo Completo</h2>
+
+  <!-- Titolo + Burger in alto -->
+  <div class="header-row">
+    <h2>Catalogo Completo</h2>
+
+    <button mat-icon-button (click)="drawer.toggle()" class="burger">
+      <mat-icon>menu</mat-icon>
+    </button>
+  </div>
 
   <div *ngIf="caricamento" class="loading">Caricamento in corso...</div>
 
@@ -9,40 +17,40 @@
     Nessun libro disponibile al momento.
   </div>
 
-  <!-- Catalogo filtrato -->
+  <!-- Catalogo filtrato (UNICO) -->
   <div class="catalogo-container" *ngIf="!caricamento && !errore && libriFiltrati.length > 0">
     <app-libro-card
       *ngFor="let libro of libriFiltrati; trackBy: trackByIsbn"
       [libro]="libro">
     </app-libro-card>
   </div>
+
+  <!-- 🔥 SEZIONE ADMIN (SPOSTATA QUI DENTRO = VISIBILE) -->
+  <div *ngIf="ruoloAdmin" class="admin-panel">
+    <button mat-raised-button color="primary" (click)="apriDialogAggiungiLibro()">
+      ➕ Aggiungi libro
+    </button>
+  </div>
+
+  <div *ngIf="ruoloAdmin"
+       class="admin-panel"
+       style="margin-top: 1rem; display:flex; gap:1rem; align-items:center;">
+
+    <mat-form-field appearance="outline">
+      <mat-label>Rimuovi libro per ISBN</mat-label>
+      <input matInput [(ngModel)]="isbnDaRimuovere">
+    </mat-form-field>
+
+    <button mat-raised-button color="warn" (click)="rimuoviLibro()">
+      🗑️ Rimuovi
+    </button>
+
+  </div>
+
 </section>
 
 
-<!-- SEZIONE ADMIN -->
-<div *ngIf="ruoloAdmin" class="admin-panel">
-  <button mat-raised-button color="primary" (click)="apriDialogAggiungiLibro()">
-    ➕ Aggiungi libro
-  </button>
-</div>
-
-<div *ngIf="ruoloAdmin"
-     class="admin-panel"
-     style="margin-top: 1rem; display:flex; gap:1rem; align-items:center;">
-
-  <mat-form-field appearance="outline">
-    <mat-label>Rimuovi libro per ISBN</mat-label>
-    <input matInput [(ngModel)]="isbnDaRimuovere">
-  </mat-form-field>
-
-  <button mat-raised-button color="warn" (click)="rimuoviLibro()">
-    🗑️ Rimuovi
-  </button>
-
-</div>
-
-
-<!-- FILTRI (BURGER MENU) -->
+<!-- FILTRI (SIDENAV) -->
 <mat-sidenav-container class="container">
 
   <mat-sidenav #drawer mode="over">
@@ -72,18 +80,6 @@
 
   </mat-sidenav>
 
-  <mat-sidenav-content>
-
-    <!-- pulsante burger -->
-    <button mat-icon-button (click)="drawer.toggle()" class="burger">
-      <mat-icon>menu</mat-icon>
-    </button>
-
-    <!-- catalogo filtrato -->
-
-
-  </mat-sidenav-content>
+  <mat-sidenav-content></mat-sidenav-content>
 
 </mat-sidenav-container>
-
-

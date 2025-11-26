@@ -17,7 +17,7 @@ import { AuthStateService } from './services/AuthStatusService';
     <router-outlet></router-outlet>
 
     <footer class="footer">
-      © 2025 Booklet – Tutti i diritti riservati
+      Booklet
     </footer>
   `,
 
