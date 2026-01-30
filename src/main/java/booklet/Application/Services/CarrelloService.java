@@ -15,12 +15,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Service in-memory per la gestione del carrello.
- * - Accetta  isbn + quantita dal client.
- * prezzo titolo e disponibilità dal DB.
 
- */
 
 
 @Service
@@ -83,7 +78,7 @@ public class CarrelloService {
 
     @PreAuthorize("@ownership.check(#userId)")
     @Transactional
-    public void checkout(String userId) {
+    public void checkout(String userId, BigDecimal totaleClient) {
 
         Objects.requireNonNull(userId, "L'id utente non può essere nullo");
 
@@ -91,6 +86,32 @@ public class CarrelloService {
         if (carrello == null || carrello.getLibriNelCarrello().isEmpty()) {
             throw new IllegalStateException("Il carrello è vuoto o non esiste per l'utente " + userId);
         }
+
+        BigDecimal totaleReale = BigDecimal.ZERO;
+
+        for (OggettoCarrello oggetto : carrello.getLibriNelCarrello()) {
+
+            String isbn = oggetto.getIsbn();
+            int quantita = oggetto.getQuantita();
+
+            // Recupero il prezzo reale DAL DB (NON dal client)
+            Libro libro = libroRepository.findById(isbn)
+                    .orElseThrow(() -> new IllegalStateException("Libro non trovato nel DB: " + isbn));
+
+            BigDecimal prezzo = libro.getPrezzo();
+            BigDecimal subTot = prezzo.multiply(BigDecimal.valueOf(quantita));
+
+            totaleReale = totaleReale.add(subTot);
+        }
+
+        // Confronto totale inviato dal client e totale reale
+        if (totaleClient == null || totaleReale.compareTo(totaleClient) != 0) {
+            throw new IllegalStateException(
+                    "Totale NON valido: " +
+                            "totale inviato=" + totaleClient + ", totale reale=" + totaleReale
+            );
+        }
+
 
         Utente utente = utenteRepository.findById(userId)
                 .orElseThrow(() -> new IllegalStateException("Utente non trovato nel DB: " + userId));
