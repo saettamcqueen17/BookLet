@@ -12,6 +12,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 @RestController
 @RequestMapping("/api/me/carrello")
 public class CarrelloController {
@@ -66,12 +68,15 @@ public class CarrelloController {
     }
 
     @PostMapping("/checkout")
-    public ResponseEntity<String> checkout(@AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<String> checkout(
+            @AuthenticationPrincipal Jwt jwt,
+            @Valid @RequestBody CarrelloDTO carrelloDTO
+    ) {
 
         String userId = jwt.getSubject();
         utenteService.ensureUserExistsFromJwt(jwt);
 
-        carrelloService.checkout(userId);
+        carrelloService.checkout(userId,carrelloDTO);
         return ResponseEntity.ok("Checkout completato con successo!");
     }
     // ➤ Svuota completamente il carrello

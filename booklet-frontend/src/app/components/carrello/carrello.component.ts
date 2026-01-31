@@ -105,10 +105,16 @@ export class CarrelloComponent {
   }
 
   checkout(): void {
+    const carrelloCorrente = this.carrello();
+    if (!carrelloCorrente || carrelloCorrente.oggetti.length === 0) {
+      this.snackBar.open('Il carrello è vuoto', 'Chiudi', { duration: 3000 });
+      return;
+    }
+
     this.loading.set(true);
     this.error.set(null);
 
-    this.carrelloService.checkout().subscribe({
+    this.carrelloService.checkout(carrelloCorrente).subscribe({
       next: () => {
         this.carrello.set({
           oggetti: [],
