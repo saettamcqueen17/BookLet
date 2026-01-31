@@ -57,8 +57,17 @@ public class CatalogoGeneraleController {
         return Arrays.stream(Genere.values())
                 .map(Enum::name)
                 .toList();
+    }
 
-
+    /**
+     * 🔥 Endpoint per sincronizzare i libri esistenti nel CatalogoGenerale
+     * con la tabella Libro. Da chiamare una tantum per risolvere l'inconsistenza.
+     */
+    @PostMapping("/sync")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> sincronizzaLibri() {
+        int count = service.sincronizzaLibriEsistenti();
+        return ResponseEntity.ok("Sincronizzati " + count + " libri dalla tabella catalogo_generale a libro");
     }
 }
 

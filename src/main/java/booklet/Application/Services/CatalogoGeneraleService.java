@@ -67,7 +67,25 @@ public class CatalogoGeneraleService implements CarrelloService.CatalogQueryPort
         validaNonNegativo(entity.getDisponibilita(), "disponibilità");
         validaPrezzo(entity.getPrezzo());
 
-        return LibroMapper.toDto(repo.save(entity));
+        // Salva nel catalogo generale
+        CatalogoGenerale saved = repo.save(entity);
+
+        // 🔥 Sincronizza nella tabella Libro (senza prezzo e disponibilità per il catalogo personale/redazione)
+        if (!libroRepo.existsByIsbn(isbn)) {
+            Libro libro = new Libro();
+            libro.setIsbn(isbn);
+            libro.setTitolo(entity.getTitolo());
+            libro.setAutore(entity.getAutore());
+            libro.setCasaEditrice(entity.getCasa_editrice());
+            libro.setGenere(entity.getGenere());
+            libro.setImmagineLibro(entity.getImmagineLibro());
+            // NON impostiamo prezzo e disponibilità - questi restano nel CatalogoGenerale
+            libro.setPrezzo(BigDecimal.ZERO); // valore di default
+            libro.setDisponibilita(0); // valore di default
+            libroRepo.save(libro);
+        }
+
+        return LibroMapper.toDto(saved);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -76,6 +94,8 @@ public class CatalogoGeneraleService implements CarrelloService.CatalogQueryPort
         if (dtos == null || dtos.isEmpty()) return List.of();
 
         Map<String, CatalogoGenerale> daSalvare = new LinkedHashMap<>();
+        Map<String, Libro> libriDaSalvare = new LinkedHashMap<>();
+
         for (LibroDTO d : dtos) {
             Objects.requireNonNull(d, "dto nullo nella lista");
             if (d.getIsbn() == null || d.getIsbn().isBlank()) {
@@ -91,10 +111,31 @@ public class CatalogoGeneraleService implements CarrelloService.CatalogQueryPort
             validaNonNegativo(e.getDisponibilita(), "disponibilità");
             validaPrezzo(e.getPrezzo());
             daSalvare.put(isbn, e);
+
+            // 🔥 Prepara anche il Libro per la sincronizzazione
+            if (!libroRepo.existsByIsbn(isbn)) {
+                Libro libro = new Libro();
+                libro.setIsbn(isbn);
+                libro.setTitolo(e.getTitolo());
+                libro.setAutore(e.getAutore());
+                libro.setCasaEditrice(e.getCasa_editrice());
+                libro.setGenere(e.getGenere());
+                libro.setImmagineLibro(e.getImmagineLibro());
+                libro.setPrezzo(BigDecimal.ZERO); // valore di default
+                libro.setDisponibilita(0); // valore di default
+                libriDaSalvare.put(isbn, libro);
+            }
         }
 
-        return repo.saveAll(daSalvare.values())
-                .stream()
+        // Salva tutti i CatalogoGenerale
+        List<CatalogoGenerale> saved = repo.saveAll(daSalvare.values());
+
+        // 🔥 Salva tutti i Libro
+        if (!libriDaSalvare.isEmpty()) {
+            libroRepo.saveAll(libriDaSalvare.values());
+        }
+
+        return saved.stream()
                 .map(LibroMapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -103,7 +144,14 @@ public class CatalogoGeneraleService implements CarrelloService.CatalogQueryPort
     @Transactional
     public void rimuoviLibroPerIsbn(String rawIsbn) {
         String isbn = normalizzaIsbn(rawIsbn);
+
+        // Rimuove dal catalogo generale
         repo.deleteByIsbn(isbn);
+
+        // 🔥 Rimuove anche dalla tabella Libro se esiste
+        if (libroRepo.existsByIsbn(isbn)) {
+            libroRepo.deleteByIsbn(isbn);
+        }
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -162,5 +210,39 @@ public class CatalogoGeneraleService implements CarrelloService.CatalogQueryPort
         }
     }
 
+    /**
+     * 🔥 Metodo di sincronizzazione per i libri già esistenti nel CatalogoGenerale
+     * che non sono ancora presenti nella tabella Libro.
+     * Da chiamare una tantum per risolvere l'inconsistenza esistente.
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    public int sincronizzaLibriEsistenti() {
+        List<CatalogoGenerale> tuttiLibri = repo.findAll();
+        int sincronizzati = 0;
+
+        for (CatalogoGenerale cg : tuttiLibri) {
+            String isbn = cg.getIsbn();
+
+            // Se il libro non esiste nella tabella Libro, lo creiamo
+            if (!libroRepo.existsByIsbn(isbn)) {
+                Libro libro = new Libro();
+                libro.setIsbn(isbn);
+                libro.setTitolo(cg.getTitolo());
+                libro.setAutore(cg.getAutore());
+                libro.setCasaEditrice(cg.getCasa_editrice());
+                libro.setGenere(cg.getGenere());
+                libro.setImmagineLibro(cg.getImmagineLibro());
+                libro.setPrezzo(BigDecimal.ZERO); // valore di default, il prezzo reale è nel CatalogoGenerale
+                libro.setDisponibilita(0); // valore di default, la disponibilità reale è nel CatalogoGenerale
+
+                libroRepo.save(libro);
+                sincronizzati++;
+            }
+        }
+
+        return sincronizzati;
+    }
 
 }
+

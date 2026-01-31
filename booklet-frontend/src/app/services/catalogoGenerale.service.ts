@@ -35,39 +35,16 @@ export class CatalogoGeneraleService {
     const url = `${this.baseUrl}/generale`;
     return this.http.get<Libro[]>(url);
   }
-  lista(page = 0, size = 20, sort?: string): Observable<Page<Libro>> {
-    let params = new HttpParams()
-      .set('page', String(page))
-      .set('size', String(size));
 
-    if (sort) params = params.set('sort', sort);
 
-    console.log('📚 [CatalogoGeneraleService] GET lista con params:', params.toString());
-    return this.http.get<Page<Libro>>(this.baseUrl, { params });
-  }
 
-  dettaglio(isbn: string): Observable<Libro> {
-    const url = `${this.baseUrl}/${encodeURIComponent(isbn)}`;
-    console.log('📘 [CatalogoGeneraleService] GET dettaglio →', url);
-    return this.http.get<Libro>(url);
-  }
 
   aggiungi(libro: Libro): Observable<Libro> {
     console.log('➕ [CatalogoGeneraleService] POST libro:', libro);
     return this.http.post<Libro>(this.baseUrl, libro);
   }
 
-  aggiungiMultipli(libri: Libro[]): Observable<Libro[]> {
-    const url = `${this.baseUrl}/batch`;
-    console.log('📦 [CatalogoGeneraleService] POST multipli →', url);
-    return this.http.post<Libro[]>(url, libri);
-  }
 
-  elimina(isbn: string): Observable<void> {
-    const url = `${this.baseUrl}/${encodeURIComponent(isbn)}`;
-    console.log('🗑️ [CatalogoGeneraleService] DELETE →', url);
-    return this.http.delete<void>(url);
-  }
 
   private combineUrl(base: string, path: string): string {
     if (!base) return path;
