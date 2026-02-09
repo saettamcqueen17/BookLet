@@ -1,6 +1,6 @@
 <h2>Aggiungi nuovo libro</h2>
 
-<form [formGroup]="form">
+<form [formGroup]="form" (ngSubmit)="salva()">
 
   <mat-form-field appearance="outline">
     <mat-label>Titolo</mat-label>
@@ -29,7 +29,7 @@
 
   <mat-form-field appearance="outline">
     <mat-label>URL copertina</mat-label>
-    <input matInput formControlName="immagineUrl">
+    <input matInput formControlName="immagineLibro">
   </mat-form-field>
 
   <mat-form-field appearance="outline">
@@ -43,8 +43,8 @@
   </mat-form-field>
 
   <div style="display:flex; justify-content:end; gap:1rem;">
-    <button mat-button (click)="annulla()">Annulla</button>
-    <button mat-raised-button color="primary" (click)="salva()">Salva</button>
+    <button mat-button type="button" (click)="annulla()">Annulla</button>
+    <button mat-raised-button color="primary" type="submit">Salva</button>
   </div>
 
 </form>

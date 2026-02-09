@@ -2,6 +2,7 @@ package booklet.Application.Entities;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -16,7 +17,7 @@ public class CatalogoRedazione {
     @JoinColumn(name = "isbn", referencedColumnName = "isbn")
     private Libro libro;
 
-    @Column(name = "data_inserimento")
+    @Column(name = "data_inserimento", nullable = true)
     private LocalDateTime dataInserimento;
 
     @Column(name = "genere")
@@ -67,4 +68,15 @@ public class CatalogoRedazione {
     public void setValutazioneRedazione(Double valutazione) {
         this.valutazioneRedazione = valutazione ;
     }
+
+    public void setGenere(Genere genere) {
+       this.genere = genere.toString();
+    }
+
+
+    public void setDataInserimento(LocalDateTime dataInserimento){
+        this.dataInserimento = dataInserimento;
+    }
+
+
 }

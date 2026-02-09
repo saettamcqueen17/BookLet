@@ -90,6 +90,49 @@ public class CatalogoGeneraleService implements CarrelloService.CatalogQueryPort
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
+    public LibroDTO modificaLibro(LibroDTO dto) {
+        Objects.requireNonNull(dto, "dto nullo");
+        if (dto.getIsbn() == null || dto.getIsbn().isBlank()) {
+            throw new IllegalArgumentException("ISBN mancante");
+        }
+        String isbn = normalizzaIsbn(dto.getIsbn());
+
+        // Verifica che il libro esista
+        CatalogoGenerale entity = repo.findByIsbn(isbn)
+                .orElseThrow(() -> new IllegalArgumentException("Libro non trovato con ISBN: " + isbn));
+
+        // Aggiorna i campi
+        entity.setTitolo(dto.getTitolo());
+        entity.setAutore(dto.getAutore());
+        entity.setCasa_editrice(dto.getCasaEditrice());
+        entity.setGenere(dto.getGenere());
+        entity.setImmagineLibro(dto.getImmagineLibro());
+        entity.setPrezzo(dto.getPrezzo());
+        entity.setDisponibilita(dto.getDisponibilita());
+
+        validaNonNegativo(entity.getDisponibilita(), "disponibilità");
+        validaPrezzo(entity.getPrezzo());
+
+        // Salva le modifiche
+        CatalogoGenerale updated = repo.save(entity);
+
+        // 🔥 Sincronizza anche nella tabella Libro
+        Optional<Libro> libroOpt = libroRepo.findByIsbn(isbn);
+        if (libroOpt.isPresent()) {
+            Libro libro = libroOpt.get();
+            libro.setTitolo(entity.getTitolo());
+            libro.setAutore(entity.getAutore());
+            libro.setCasaEditrice(entity.getCasa_editrice());
+            libro.setGenere(entity.getGenere());
+            libro.setImmagineLibro(entity.getImmagineLibro());
+            libroRepo.save(libro);
+        }
+
+        return LibroMapper.toDto(updated);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
     public List<LibroDTO> aggiungiLibri(List<LibroDTO> dtos) {
         if (dtos == null || dtos.isEmpty()) return List.of();
 

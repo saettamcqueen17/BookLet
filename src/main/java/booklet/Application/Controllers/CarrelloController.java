@@ -79,7 +79,6 @@ public class CarrelloController {
         carrelloService.checkout(userId,carrelloDTO);
         return ResponseEntity.ok("Checkout completato con successo!");
     }
-    // ➤ Svuota completamente il carrello
     @DeleteMapping
     public ResponseEntity<CarrelloDTO> clear(@AuthenticationPrincipal Jwt jwt) {
         String userId = jwt.getSubject();

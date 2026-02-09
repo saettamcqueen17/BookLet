@@ -21,35 +21,53 @@ import { CommonModule } from '@angular/common';
 })
 export class DialogAggiungiLibroComponent {
 
-  // 🔹 DICHIARO la proprietà, senza assegnarla
   form: any;
 
   constructor(
-    private fb: FormBuilder,          // 🔥 fb ora esiste al momento dell’assegnazione
+    private fb: FormBuilder,
     private http: HttpClient,
     private ref: MatDialogRef<DialogAggiungiLibroComponent>
   ) {
-    // 🔹 INIZIALIZZO il form qui (dove fb è DEFINITO)
     this.form = this.fb.group({
       titolo: [''],
       autore: [''],
       isbn: [''],
       casaEditrice: [''],
       genere: [''],
-      immagineUrl: [''],
+      immagineLibro: [''],
       disponibilita: [1],
-      prezzo :[0]
+      prezzo: [0]
     });
   }
+
 
   salva() {
-    this.http.post('http://localhost:8080/api/catalogo', this.form.value)
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
-      .subscribe({
+    const raw = this.form.getRawValue();
+    const payload = {
+      titolo: (raw.titolo ?? '').trim(),
+      autore: (raw.autore ?? '').trim(),
+      isbn: (raw.isbn ?? '').trim(),
+      casaEditrice: (raw.casaEditrice ?? '').trim(),
+      genere: (raw.genere ?? '').trim(),
+      immagineLibro: (raw.immagineLibro ?? '').trim(),
+      disponibilita: raw.disponibilita ?? 1,
+      prezzo: raw.prezzo ?? 0
+    };
+
+    this.http.post('http://localhost:8080/api/catalogo', payload).subscribe({
       next: () => this.ref.close('added'),
-      error: err => alert("Errore: " + err.error)
+      error: err => {
+        console.error('Errore aggiunta libro:', err);
+        alert('Errore: ' + (err?.error?.message ?? err?.error ?? err?.message ?? err));
+      }
     });
   }
+
 
   annulla() {
     this.ref.close();

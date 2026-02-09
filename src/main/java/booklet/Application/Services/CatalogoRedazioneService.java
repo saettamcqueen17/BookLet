@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,10 +55,35 @@ public class CatalogoRedazioneService {
 
     @Transactional
     public void cambiaVisibile(String isbn, boolean visibile) {
-        CatalogoRedazione scheda = redazioneRepo.findByLibroIsbn(isbn)
-                .orElseThrow();
-        scheda.setVisibile(visibile);
-        redazioneRepo.save(scheda);
+
+        Optional<CatalogoRedazione> opt = redazioneRepo.findByLibroIsbn(isbn);
+
+        if (opt.isPresent()) {
+            CatalogoRedazione scheda = opt.get();
+            scheda.setVisibile(visibile);
+            redazioneRepo.save(scheda);
+            return;
+        }
+
+        // qui scheda NON esiste
+        if (!visibile) {
+            // toggle verso false: non serve creare nulla
+            return;
+        }
+
+        Libro libro = libroRepo.findById(isbn)
+                .orElseThrow(() -> new EntityNotFoundException("Libro non trovato: " + isbn));
+
+        CatalogoRedazione nuova = new CatalogoRedazione(libro);
+
+
+        nuova.setGenere(libro.getGenere());
+        nuova.setRecensione("");
+        nuova.setValutazioneRedazione(0.0);
+
+        nuova.setVisibile(true);
+
+        redazioneRepo.save(nuova);
     }
 
     @Transactional

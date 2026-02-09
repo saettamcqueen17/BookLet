@@ -89,7 +89,6 @@ export class CatalogoRedazioneComponent implements OnInit {
         result.valutazione
       ).subscribe({
         next: () => {
-          // aggiorno la UI localmente
           s.recensione = result.recensione;
           s.valutazioneRedazione = result.valutazione;
 

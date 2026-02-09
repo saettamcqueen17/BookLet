@@ -7,5 +7,5 @@ export interface Libro {
   prezzo?: number;
   categoria?: string;
   disponibilita?: number;
-  immagineCopertina?: string;
+  immagineLibro?: string;
 }

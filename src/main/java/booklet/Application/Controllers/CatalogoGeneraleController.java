@@ -2,7 +2,6 @@ package booklet.Application.Controllers;
 
 import booklet.Application.DTO.LibroDTO;
 import booklet.Application.Entities.Genere;
-import booklet.Application.Entities.Libro;
 import booklet.Application.Services.CatalogoGeneraleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +21,7 @@ public class CatalogoGeneraleController {
         this.service = service;
     }
 
-    // ✅ mostra solo libri con disponibilità > 0
+    //  mostra solo libri con disponibilità > 0
     @GetMapping("/generale")
     public List<LibroDTO> getCatalogoGenerale() {
         return service.getCatalogoDisponibile();
@@ -36,14 +35,21 @@ public class CatalogoGeneraleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
-    // 🔥 AGGIUNGI LISTA DI LIBRI (opzionale)
+    // 🔥 MODIFICA LIBRO ESISTENTE (solo ADMIN)
+    @PutMapping("/{isbn}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<LibroDTO> modifica(@PathVariable String isbn, @RequestBody LibroDTO dto) {
+        dto.setIsbn(isbn); // Forza l'ISBN del path
+        LibroDTO updated = service.modificaLibro(dto);
+        return ResponseEntity.ok(updated);
+    }
+
     @PostMapping("/batch")
     @PreAuthorize("hasRole('ADMIN')")
     public List<LibroDTO> aggiungiMultipli(@RequestBody List<LibroDTO> dtos) {
         return service.aggiungiLibri(dtos);
     }
 
-    // 🔥 RIMUOVI LIBRO PER ISBN (solo ADMIN)
     @DeleteMapping("/{isbn}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> rimuovi(@PathVariable String isbn) {
@@ -59,10 +65,7 @@ public class CatalogoGeneraleController {
                 .toList();
     }
 
-    /**
-     * 🔥 Endpoint per sincronizzare i libri esistenti nel CatalogoGenerale
-     * con la tabella Libro. Da chiamare una tantum per risolvere l'inconsistenza.
-     */
+
     @PostMapping("/sync")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> sincronizzaLibri() {

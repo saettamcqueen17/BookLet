@@ -20,15 +20,44 @@
   <!-- Catalogo filtrato (UNICO) -->
   <div class="catalogo-container" *ngIf="!caricamento && !errore && libriFiltrati.length > 0">
     <app-libro-card
-      *ngFor="let libro of libriFiltrati; trackBy: trackByIsbn"
+      *ngFor="let libro of libriPagina; trackBy: trackByIsbn"
       [libro]="libro">
     </app-libro-card>
   </div>
 
+  <!-- Controlli di paginazione -->
+  <div *ngIf="!caricamento && !errore && libriFiltrati.length > 0" class="pagination-controls">
+    <button
+      mat-raised-button
+      (click)="paginaPrecedente()"
+      [disabled]="paginaCorrente === 0"
+      class="pagination-button">
+      <mat-icon>chevron_left</mat-icon>
+      Precedente
+    </button>
+
+    <span class="pagination-info">
+      Pagina {{ paginaCorrente + 1 }} di {{ totalePagine }}
+      ({{ libriFiltrati.length }} libri totali)
+    </span>
+
+    <button
+      mat-raised-button
+      (click)="paginaSuccessiva()"
+      [disabled]="paginaCorrente >= totalePagine - 1"
+      class="pagination-button">
+      Successiva
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+
   <!-- 🔥 SEZIONE ADMIN (SPOSTATA QUI DENTRO = VISIBILE) -->
-  <div *ngIf="ruoloAdmin" class="admin-panel">
+  <div *ngIf="ruoloAdmin" class="admin-panel" style="display:flex; gap:1rem; flex-wrap: wrap;">
     <button mat-raised-button color="primary" (click)="apriDialogAggiungiLibro()">
       ➕ Aggiungi libro
+    </button>
+    <button mat-raised-button color="accent" (click)="apriDialogModificaLibro()">
+      ✏️ Modifica libro
     </button>
   </div>
 

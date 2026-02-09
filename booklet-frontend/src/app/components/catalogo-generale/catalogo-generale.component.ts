@@ -15,9 +15,11 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 import { LibroCardComponent } from '../shared/libro-card.component';
 import { DialogAggiungiLibroComponent } from '../catalogo-generale/dialog-aggiungi-libro.component';
+import { DialogModificaLibroComponent } from '../catalogo-generale/dialog-modifica-libro.component';
 
 import { environment } from '../../../environments/environment';
 
@@ -36,7 +38,8 @@ import { environment } from '../../../environments/environment';
     MatSidenavModule,
     MatListModule,
     MatRadioModule,
-    MatIconModule
+    MatIconModule,
+    MatButtonModule
   ],
   templateUrl: './catalogo-generale.component.html',
   styleUrls: ['./catalogo-generale.component.css'],
@@ -51,7 +54,12 @@ export class CatalogoGeneraleComponent implements OnInit, OnDestroy {
 
   libriOriginali: any[] = [];
   libriFiltrati: any[] = [];
+  libriPagina: any[] = [];
 
+  // Paginazione
+  paginaCorrente = 0;
+  libriPerPagina = 12;
+  totalePagine = 0;
 
   generi: string[] = [];
   filtroTitolo: string = '';
@@ -142,6 +150,35 @@ export class CatalogoGeneraleComponent implements OnInit, OnDestroy {
     }
 
     this.libriFiltrati = risultato;
+    this.paginaCorrente = 0;
+    this.aggiornaPaginazione();
+  }
+
+  aggiornaPaginazione() {
+    this.totalePagine = Math.ceil(this.libriFiltrati.length / this.libriPerPagina);
+    const inizio = this.paginaCorrente * this.libriPerPagina;
+    const fine = inizio + this.libriPerPagina;
+    this.libriPagina = this.libriFiltrati.slice(inizio, fine);
+  }
+
+  paginaPrecedente() {
+    if (this.paginaCorrente > 0) {
+      this.paginaCorrente--;
+      this.aggiornaPaginazione();
+      this.scrollToTop();
+    }
+  }
+
+  paginaSuccessiva() {
+    if (this.paginaCorrente < this.totalePagine - 1) {
+      this.paginaCorrente++;
+      this.aggiornaPaginazione();
+      this.scrollToTop();
+    }
+  }
+
+  private scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   trackByIsbn(_: number, libro: any) {
@@ -155,6 +192,18 @@ export class CatalogoGeneraleComponent implements OnInit, OnDestroy {
 
     ref.afterClosed().subscribe(r => {
       if (r === 'added') {
+        this.caricaLibri();
+      }
+    });
+  }
+
+  apriDialogModificaLibro() {
+    const ref = this.dialog.open(DialogModificaLibroComponent, {
+      width: '500px',
+    });
+
+    ref.afterClosed().subscribe(r => {
+      if (r === 'updated') {
         this.caricaLibri();
       }
     });

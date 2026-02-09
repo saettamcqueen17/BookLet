@@ -109,8 +109,7 @@ public class CarrelloService {
             int quantita = oggetto.getQuantita();
             BigDecimal prezzoCarrello = oggetto.getPrezzoUnitario();
 
-            // IMPORTANTE: Recupero il prezzo dalla STESSA FONTE usata quando si aggiunge al carrello
-            // Uso CatalogoGeneraleService (tabella catalogo_generale) NON libroRepository (tabella libro)
+
             BookSnapshot book = catalog.findByIsbn(isbn)
                     .orElseThrow(() -> new IllegalStateException("Libro non trovato nel catalogo: " + isbn));
 
@@ -137,7 +136,6 @@ public class CarrelloService {
         System.out.println("Libri con prezzo modificato: " + libriConPrezzoModificato.size());
         System.out.println("======================");
 
-        // Se ci sono libri con prezzi modificati, lancio un'eccezione con i dettagli
         if (!libriConPrezzoModificato.isEmpty()) {
             String dettagli = String.join("; ", libriConPrezzoModificato);
             throw new IllegalStateException(
@@ -146,7 +144,6 @@ public class CarrelloService {
             );
         }
 
-        // Confronto totale inviato dal client e totale reale
         BigDecimal totaleClient = carrelloClient.getTotale();
         if (totaleClient == null || totaleReale.compareTo(totaleClient) != 0) {
             throw new IllegalStateException(
@@ -187,6 +184,7 @@ public class CarrelloService {
         }
 
         carrello.getLibriNelCarrello().clear();
+        carrelliPerUtente.remove(userId);
     }
 
 
@@ -204,14 +202,12 @@ public class CarrelloService {
                 return CarrelloMapper.toDto(carrello);
             }
 
-            // Recupero sempre i dati aggiornati dal catalogo (incluso il prezzo)
             BookSnapshot book = catalog.findByIsbn(isbn)
                     .orElseThrow(() -> new IllegalArgumentException("Libro non presente nel catalogo generale"));
             if (book.stock() != null && nuovaQuantita > book.stock()) {
                 throw new IllegalArgumentException("Quantità eccede disponibilità");
             }
 
-            // Rimuovo il vecchio oggetto (se esiste) e aggiungo quello nuovo con prezzo aggiornato
             carrello.rimuoviOggetto(isbn);
             carrello.aggiungiOggetto(new OggettoCarrello(isbn, book.titolo(), book.prezzo(), nuovaQuantita));
 
