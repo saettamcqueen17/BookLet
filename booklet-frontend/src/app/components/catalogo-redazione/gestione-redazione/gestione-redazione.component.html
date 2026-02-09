@@ -1,0 +1,44 @@
+<h1>Gestione Redazione</h1>
+
+<h2>Libri inclusi</h2>
+
+<div class="griglia">
+  <app-scheda-redazione
+    *ngFor="let s of redazione"
+    [scheda]="s"
+    (modifica)="modificaRecensione($event)"
+    (toggle)="toggleVisibile($event)"
+    (rimuovi)="rimuovi($event)">
+  </app-scheda-redazione>
+</div>
+
+
+<h2>Aggiungi libri alla redazione</h2>
+
+<div class="griglia">
+  <mat-card *ngFor="let libro of tuttiLibri" class="card">
+
+    <mat-card-header>
+      <mat-card-title>{{ libro.titolo }}</mat-card-title>
+      <mat-card-subtitle>{{ libro.autore }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <img mat-card-image [src]="libro.immagineLibro" alt="copertina" />
+
+    <mat-card-actions>
+      <button *ngIf="!isInRedazione(libro.isbn)"
+              mat-stroked-button
+              color="primary"
+              (click)="aggiungi(libro.isbn)">
+        ➕ Aggiungi
+      </button>
+
+      <button *ngIf="isInRedazione(libro.isbn)"
+              mat-button disabled>
+        ✔ Già presente
+      </button>
+    </mat-card-actions>
+
+  </mat-card>
+</div>
+

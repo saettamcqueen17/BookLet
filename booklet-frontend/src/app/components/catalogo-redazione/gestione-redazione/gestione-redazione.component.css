@@ -1,0 +1,17 @@
+griglia {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.card {
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.libro-redazione {
+  background: #fff5e6;
+  border-color: #ffcc80;
+}

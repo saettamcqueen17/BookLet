@@ -1,0 +1,65 @@
+<h2>Modifica Libro</h2>
+
+<div *ngIf="!libroCaricato && !erroreCaricamento" class="loading">
+  <mat-form-field appearance="outline" style="width: 100%; margin-bottom: 1rem;">
+    <mat-label>ISBN del libro da modificare</mat-label>
+    <input matInput [(ngModel)]="isbnDaCercare" (keyup.enter)="cercaLibro()">
+  </mat-form-field>
+  <button mat-raised-button color="primary" (click)="cercaLibro()" [disabled]="!isbnDaCercare">
+    Cerca Libro
+  </button>
+</div>
+
+<div *ngIf="erroreCaricamento" class="error">
+  <p>{{ erroreCaricamento }}</p>
+  <button mat-button (click)="resetRicerca()">Riprova</button>
+</div>
+
+<form *ngIf="libroCaricato" [formGroup]="form" (ngSubmit)="salva()">
+
+  <mat-form-field appearance="outline">
+    <mat-label>ISBN</mat-label>
+    <input matInput formControlName="isbn" readonly>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Titolo</mat-label>
+    <input matInput formControlName="titolo">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Autore</mat-label>
+    <input matInput formControlName="autore">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Casa editrice</mat-label>
+    <input matInput formControlName="casaEditrice">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Genere</mat-label>
+    <input matInput formControlName="genere">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>URL copertina</mat-label>
+    <input matInput formControlName="immagineLibro">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Disponibilità</mat-label>
+    <input type="number" matInput formControlName="disponibilita">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Prezzo (€)</mat-label>
+    <input type="number" matInput formControlName="prezzo">
+  </mat-form-field>
+
+  <div style="display:flex; justify-content:end; gap:1rem;">
+    <button mat-button type="button" (click)="annulla()">Annulla</button>
+    <button mat-raised-button color="primary" type="submit">Salva Modifiche</button>
+  </div>
+
+</form>
